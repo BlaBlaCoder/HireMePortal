@@ -813,11 +813,9 @@
                                     <span class="label">Open For Locations</span>
                                     <div id="openforlocationcontainer"></div>
                                 </div>
-                                <div class="profile-field" style="grid-column: 1 / -1;">
+                                <div class="profile-field">
                                     <span class="label">Skills</span>
-                                    <div class="value">
-                                        <span class="tag">${jobSeekerProfile.skills || 'No skills listed'}</span>
-                                    </div>
+                                    <div id="allCurrentSkills"></div>
                                 </div>
                             </div>
 
@@ -853,6 +851,32 @@
                     
                     // Append the newly created tag to the container
                     container.appendChild(tagElement);
+                });
+
+                 const optedSkillsData = jobSeekerProfile.skills || 'No skills listed';
+
+                // 2. Get the container element from the HTML
+                const skillContainer = document.getElementById('allCurrentSkills');
+
+                // 3. Split the string into an array of location names
+                const optedSkillsArray = optedSkillsData.split(',');
+
+                // 4. Loop through the array and create an HTML element for each location
+                optedSkillsArray.forEach(skill => {
+                    // Trim whitespace from the location name
+                    const skillName = skill.trim(); 
+                    
+                    // Create a new <span> element
+                    const tagElement = document.createElement('span');
+                    
+                    // Add the "tag" class for styling
+                    tagElement.classList.add('tag');
+                    
+                    // Set the text inside the <span> to the location name
+                    tagElement.textContent = skillName;
+                    
+                    // Append the newly created tag to the container
+                    skillContainer.appendChild(tagElement);
                 });
             } else {
                 detailsContainer.classList.add('hidden');
