@@ -199,6 +199,24 @@
             font-size: 16px;
             min-width: 150px;
         }
+        .tag {
+            display: inline-block;
+            background-color: #28a745; /* Green background */
+            color: white;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 16px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+  /* Styling for the container */
+  #openforlocationcontainer {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
     </style>
 </head>
 <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen py-8">
@@ -793,9 +811,7 @@
                                 </div>
                                 <div class="profile-field">
                                     <span class="label">Open For Locations</span>
-                                    <div class="value">
-                                        <span class="tag">${jobSeekerProfile.open_for_locations || 'N/A'}</span>
-                                    </div>
+                                    <div id="openforlocationcontainer"></div>
                                 </div>
                                 <div class="profile-field" style="grid-column: 1 / -1;">
                                     <span class="label">Skills</span>
@@ -812,6 +828,32 @@
                     </button> 
                 `;
                 document.getElementById('editProfileBtn').addEventListener('click', () => toggleProfileForm(true));
+                // 1. Your dynamically generated dataset
+                const optedOpenForLocationData = jobSeekerProfile.open_for_locations || '';
+
+                // 2. Get the container element from the HTML
+                const container = document.getElementById('openforlocationcontainer');
+
+                // 3. Split the string into an array of location names
+                const optedOpenForLocationArray = optedOpenForLocationData.split(',');
+
+                // 4. Loop through the array and create an HTML element for each location
+                optedOpenForLocationArray.forEach(location => {
+                    // Trim whitespace from the location name
+                    const locationName = location.trim(); 
+                    
+                    // Create a new <span> element
+                    const tagElement = document.createElement('span');
+                    
+                    // Add the "tag" class for styling
+                    tagElement.classList.add('tag');
+                    
+                    // Set the text inside the <span> to the location name
+                    tagElement.textContent = locationName;
+                    
+                    // Append the newly created tag to the container
+                    container.appendChild(tagElement);
+                });
             } else {
                 detailsContainer.classList.add('hidden');
                 formContainer.classList.add('hidden');
