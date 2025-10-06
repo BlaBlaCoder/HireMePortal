@@ -119,7 +119,7 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(profile)
 	} else {
-		result, err := db.Exec(`
+		_, err := db.Exec(`
 			UPDATE job_seeker_profiles SET 
 			profile_summary=?, location=?, current_company=?, open_for_locations=?,
 			salary_range=?, work_ex=?, overall_work_ex=?, skills=?, job_type=?,
@@ -131,12 +131,6 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		rowsAffected, _ := result.RowsAffected()
-		if rowsAffected == 0 {
-			http.Error(w, "Profile not found", http.StatusNotFound)
 			return
 		}
 

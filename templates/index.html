@@ -126,6 +126,78 @@
 
         .edit-button:hover {
             background-color: #303f9f;
+        }/* Form Container */
+        .profile-form {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 24px 32px;
+        }
+
+        .profile-form h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a237e;
+            margin: 0 0 24px 0;
+        }
+        
+        /* Form Group for each field */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        /* Standard Text Input */
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
+        }
+
+        /* Tag Input Styles */
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #ccc;
+            padding: 8px;
+            border-radius: 6px;
+            background-color: #fff;
+            cursor: text;
+        }
+        .tag {
+            display: flex;
+            align-items: center;
+            background-color: #3f51b5;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 14px;
+        }
+        .tag-remove {
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .tag-container input {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            padding: 6px;
+            font-size: 16px;
+            min-width: 150px;
         }
     </style>
 </head>
@@ -766,7 +838,7 @@
                     document.getElementById('profileSummary').value = jobSeekerProfile.profile_summary || '';
                     document.getElementById('profileLocation').value = jobSeekerProfile.location || '';
                     document.getElementById('profileCurrentCompany').value = jobSeekerProfile.current_company || '';
-                    document.getElementById('locations-input').value = jobSeekerProfile.open_for_locations || '';
+                    document.getElementById('hidden-locations').value = jobSeekerProfile.open_for_locations || '';
                     document.getElementById('profileSalaryRange').value = jobSeekerProfile.salary_range || '';
                     document.getElementById('profileWorkEx').value = jobSeekerProfile.work_ex || '';
                     document.getElementById('profileOverallWorkEx').value = jobSeekerProfile.overall_work_ex || '';
@@ -966,9 +1038,9 @@
                             <div class="form-group">
                                 <label for="locations-input">Open For Locations</label>
                                 <div class="tag-container" id="locations-container">
-                                    <input type="text" id="locations-input" placeholder="Type a location and press Enter...">
+                                    <input type="text" id="locations-input" placeholder="Add another location...">
                                 </div>
-                                <input type="hidden" name="open_for_locations" id="hidden-locations">
+                                <input type="hidden" name="open_for_locations" id="hidden-locations" value="Pune,Gurugram">
                             </div>
                             <div>
                                 <label for="profileSalaryRange" class="block text-sm font-medium text-gray-700">Current Annual Package</label>
