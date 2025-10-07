@@ -616,7 +616,13 @@
             const analyzeBtn = document.getElementById('analyzeResumeBtn');
             const viewerContainer = document.getElementById('resumeViewerContainer');
             const aiStatusSpan = document.getElementById('aiStatus');
-
+            const resultsContainer = document.getElementById('results');
+            const overallScoreEl = document.getElementById('overall-score');
+            const ratingLabelEl = document.getElementById('rating-label');
+            const progressCircle = document.getElementById('progress-circle');
+            const contactEmailEl = document.getElementById('contact-email');
+            const contactPhoneEl = document.getElementById('contact-phone');
+            const skillsTableBody = document.getElementById('skills-table-body');
             // --- Basic validation ---
             if (!userID || !statusSpan) return;
 
@@ -641,8 +647,26 @@
                     document.getElementById('currentUploadTimeSummary').textContent = data.uploaded_at ? new Date(data.uploaded_at).toLocaleDateString() : 'N/A';
                     
                     infoDiv.classList.remove('hidden');
-                    analyzeBtn.disabled = false;
-                    aiStatusSpan.textContent = "Status: Uploaded, Ready for analysis.";
+                    const response1 = await fetch(`${API_URL}/analyze-resume/${userID}`);
+                    if(response1.ok){
+                        const analysisData = await response1.json();
+                        if(analysisData === ""){
+                            analyzeBtn.disabled = false;
+                            aiStatusSpan.textContent = "Resume Uploaded, Not Analyzed Yet.";
+                        } else {
+                            analyzeBtn.classList.add('hidden');
+                            aiStatusSpan.textContent = "Status: Analysis Completed.";
+                    // Populate UI with data
+                    console.log('Analysis Data:', analysisData);
+                    displayOverallRating(analysisData.overallRating, overallScoreEl, ratingLabelEl, progressCircle);
+                    displayContactInfo(analysisData.contactInfo, contactEmailEl, contactPhoneEl);
+                    displaySkills(analysisData.skills, skillsTableBody);
+                    resultsContainer.classList.remove('hidden');
+                        }
+                    } else {
+                        aiStatusSpan.textContent = "Status: Unable to fetch analysis status.";
+                        analyzeBtn.disabled = false;
+                    }
 
                     const downloadUrl = API_URL + data.download_url;
                     
@@ -750,6 +774,7 @@
                 if (response.ok) {
                     const data = await response.json();
                     jobSeekerProfile = data;
+                    jobSeekerProfile.allCurrentSkills=data.skills;
                     isProfileComplete = true;
                 } else {
                     jobSeekerProfile = null;
@@ -810,12 +835,24 @@
                                     <span class="value">${jobSeekerProfile.job_type || 'N/A'}</span>
                                 </div>
                                 <div class="profile-field">
+                                    <span class="label">Job Type</span>
+                                    <span class="value">${jobSeekerProfile.job_title || 'N/A'}</span>
+                                </div>
+                                <div>
+                                 </div>   
+                                <div>
+                                <div class="profile-field">
                                     <span class="label">Open For Locations</span>
                                     <div id="openforlocationcontainer"></div>
                                 </div>
                                 <div class="profile-field">
                                     <span class="label">Skills</span>
                                     <div id="allCurrentSkills"></div>
+                                </div>
+                                </div>
+                                <div class="profile-field">
+                                    <span class="label">Additional Details</span>
+                                    <p class="value">${jobSeekerProfile.details || 'N/A'}</p>
                                 </div>
                             </div>
 
@@ -853,7 +890,7 @@
                     container.appendChild(tagElement);
                 });
 
-                 const optedSkillsData = jobSeekerProfile.skills || 'No skills listed';
+                 const optedSkillsData = jobSeekerProfile.allCurrentSkills || 'No skills listed';
 
                 // 2. Get the container element from the HTML
                 const skillContainer = document.getElementById('allCurrentSkills');
@@ -908,7 +945,7 @@
                     document.getElementById('profileSalaryRange').value = jobSeekerProfile.salary_range || '';
                     document.getElementById('profileWorkEx').value = jobSeekerProfile.work_ex || '';
                     document.getElementById('profileOverallWorkEx').value = jobSeekerProfile.overall_work_ex || '';
-                    document.getElementById('profileSkills').value = jobSeekerProfile.skills || '';
+                    document.getElementById('allcurrentskill').value = jobSeekerProfile.skills || '';
                     document.getElementById('profileJobType').value = jobSeekerProfile.job_type || '';
                     document.getElementById('profileJobTitle').value = jobSeekerProfile.job_title || '';
                     document.getElementById('profileDetails').value = jobSeekerProfile.details || '';
@@ -934,7 +971,7 @@
                 salary_range: formData.get('salary_range'),
                 work_ex: formData.get('work_ex'),
                 overall_work_ex: formData.get('overall_work_ex'),
-                skills: formData.get('skills'),
+                skills: formData.get('skill-overall'),
                 job_type: formData.get('job_type'),
                 job_title: formData.get('job_title'),
                 details: formData.get('details')
@@ -980,12 +1017,12 @@
 
                         <div class="p-6 bg-white rounded-xl border border-gray-200 shadow-md">
                             <h3 class="text-xl font-bold text-gray-700 mb-3 flex items-center">Total Profile Views</h3>
-                            <p class="text-5xl font-extrabold text-green-600"><span id="viewCount">24</span></p>
+                            <p class="text-5xl font-extrabold text-green-600"><span id="companyViewProfileCount">24</span></p>
                             <p class="text-sm text-gray-500 mt-2">Companies checked your profile this month (Simulated).</p>
                         </div>
                         <div class="p-6 bg-white rounded-xl border border-gray-200 shadow-md">
                             <h3 class="text-xl font-bold text-gray-700 mb-3 flex items-center">Applications Sent</h3>
-                            <p class="text-5xl font-extrabold text-blue-600"><span id="applicationCount">5</span></p>
+                            <p class="text-5xl font-extrabold text-blue-600"><span id="companyAppliedCount">5</span></p>
                             <p class="text-sm text-gray-500 mt-2">Jobs you applied to this month (Simulated).</p>
                         </div>
                     </div>
@@ -1120,9 +1157,12 @@
                                 <label for="profileOverallWorkEx" class="block text-sm font-medium text-gray-700">Overall Work Experience</label>
                                 <input type="text" id="profileOverallWorkEx" name="overall_work_ex" placeholder="e.g., 8 years" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3">
                             </div>
-                            <div>
-                                <label for="profileSkills" class="block text-sm font-medium text-gray-700">Skills</label>
-                                <input type="text" id="profileSkills" name="skills" placeholder="e.g., Go, Python, AWS" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3">
+                            <div class="form-group">
+                                <label for="skills-input">Skills</label>
+                                <div class="tag-container" id="skills-container">
+                                    <input type="text" id="skills-input" placeholder="Add another location...">
+                                </div>
+                                <input type="hidden" name="skill-overall" id="hidden-skills" value="Java,Python,SQL">
                             </div>
                             <div>
                                 <label for="profileJobType" class="block text-sm font-medium text-gray-700">Job Type</label>
@@ -1191,9 +1231,83 @@
             const tagContainer = document.getElementById('locations-container');
             const textInput = document.getElementById('locations-input');
             const hiddenInput = document.getElementById('hidden-locations');
+            const skilltagContainer = document.getElementById('skills-container');
+            const skilltextInput = document.getElementById('skills-input');
+            const skillhiddenInput = document.getElementById('hidden-skills');
+            const companyViewProfileCountEl = document.getElementById('companyViewProfileCount');
+            const companyAppliedCount = document.getElementById('companyAppliedCount');
             let locations = [];
+            let skills = [];
+            
+            // function showcCmpanyViewProfileCountEl(){
+            //   try {
+            //     const response = fetch(API_URL+'/jobseeker/profile/'+{currentUserId});
+            //     if (!response.ok) {
+            //             throw new Error(`Server responded with status: ${response.status}. Please ensure the Go API is running.`);
+            //     }
+            //     const data = response.json();
+            //    companyViewProfileCountEl.textContent = data;
+            //  }  catch (error) {
+            //         console.error("Fetch error:", error);
+            //         displayError(error.message);
+            //     }
+            // }
 
-            function initializeTags() {
+            function initializeSkillTags() {
+                const initialValues = skillhiddenInput.value.trim();
+                if (initialValues) {
+                    const initialskills = initialValues.split(',')
+                        .map(loc => loc.trim())
+                        .filter(loc => loc !== '');
+                    
+                    initialskills.forEach(skill => {
+                        skills.push(skill);
+                        createSkillTag(skill);
+                    });
+                }
+            }
+            function updateHiddenskillInput() {
+                updateHiddenskillInput.value = skills.join(',');
+            }
+
+            function createSkillTag(label) {
+                const tag = document.createElement('div');
+                tag.classList.add('tag');
+                tag.innerHTML = `
+                    <span>${label}</span>
+                    <span class="tag-remove" data-label="${label}">&times;</span>
+                `;
+                skilltagContainer.insertBefore(tag, skilltextInput);
+            }
+            
+            skilltextInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    const newskill = skilltextInput.value.trim();
+                    if (newskill && !skills.includes(newskill)) {
+                        skills.push(newskill);
+                        createSkillTag(newskill);
+                        updateHiddenskillInput();
+                    }
+                    skilltextInput.value = '';
+                }
+            });
+
+            skilltagContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-remove')) {
+                    const labelToRemove = e.target.dataset.label;
+                    skills = skills.filter(loc => loc !== labelToRemove);
+                    e.target.parentElement.remove();
+                    updateHiddenskillInput();
+                } else if (e.target === skilltagContainer) {
+                    skilltextInput.focus();
+                }
+            });
+
+            initializeSkillTags();
+
+            // showcCmpanyViewProfileCountEl()
+           function initializeTags() {
                 const initialValues = hiddenInput.value.trim();
                 if (initialValues) {
                     const initialLocations = initialValues.split(',')
@@ -1207,6 +1321,7 @@
                 }
             }
 
+            
             function updateHiddenInput() {
                 hiddenInput.value = locations.join(',');
             }
@@ -1255,7 +1370,11 @@
                 
                 try {
                     // This should point to your local Go server's endpoint for analysis, not the resume retrieval
-                    const response = await fetch('http://localhost:8080/analyze-resume');
+                    const response = await fetch('http://localhost:8080/analyze-resume', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: currentUserId })
+                    });
 
                     if (!response.ok) {
                         throw new Error(`Server responded with status: ${response.status}. Please ensure the Go API is running.`);
@@ -1264,9 +1383,9 @@
                     const data = await response.json();
                     
                     // Populate UI with data
-                    displayOverallRating(data.overallRating);
-                    displayContactInfo(data.contactInfo);
-                    displaySkills(data.skills);
+                    displayOverallRating(data.overallRating,overallScoreEl, ratingLabelEl, progressCircle);
+                    displayContactInfo(data.contactInfo, contactEmailEl, contactPhoneEl);
+                    displaySkills(data.skills, skillsTableBody);
 
                     // Show results
                     resultsContainer.classList.remove('hidden');
@@ -1278,33 +1397,6 @@
                     loader.classList.add('hidden');
                 }
             });
-
-            function displayOverallRating(rating) {
-                const percentage = Math.round(rating.scorePercentage);
-                overallScoreEl.textContent = `${percentage}%`;
-                ratingLabelEl.textContent = rating.ratingLabel;
-                const offset = 100 - percentage;
-                progressCircle.style.strokeDashoffset = offset;
-            }
-
-            function displayContactInfo(contact) {
-                contactEmailEl.textContent = contact.email || 'Not found';
-                contactPhoneEl.textContent = contact.phone || 'Not found';
-            }
-
-            function displaySkills(skills) {
-                skillsTableBody.innerHTML = ''; // Clear previous results
-                skills.forEach(skill => {
-                    const row = document.createElement('tr');
-                    row.className = 'border-b border-gray-700 transition duration-300 ease-in-out hover:bg-gray-700/50';
-                    row.innerHTML = `
-                        <td class="whitespace-nowrap px-4 py-3 font-medium">${skill.skill}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-center">${skill.mentions}</td>
-                        <td class="whitespace-nowrap px-4 py-3">${skill.rating}</td>
-                    `;
-                    skillsTableBody.appendChild(row);
-                });
-            }
             
             function displayError(message) {
                 errorMessage.textContent = message;
@@ -1425,6 +1517,33 @@
 
         // Initial setup run
         document.addEventListener('DOMContentLoaded', checkAuth);
+
+        function displayOverallRating(rating,overallScoreEl,ratingLabelEl,progressCircle) {
+                const percentage = Math.round(rating.scorePercentage);
+                overallScoreEl.textContent = `${percentage}%`;
+                ratingLabelEl.textContent = rating.ratingLabel;
+                const offset = 100 - percentage;
+                progressCircle.style.strokeDashoffset = offset;
+        }
+
+        function displayContactInfo(contact,contactEmailEl,contactPhoneEl) {
+                contactEmailEl.textContent = contact.email || 'Not found';
+                contactPhoneEl.textContent = contact.phone || 'Not found';
+        }
+
+            function displaySkills(skills,skillsTableBody) {
+                skillsTableBody.innerHTML = ''; // Clear previous results
+                skills.forEach(skill => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-700 transition duration-300 ease-in-out hover:bg-gray-700/50';
+                    row.innerHTML = `
+                        <td class="whitespace-nowrap px-4 py-3 font-medium">${skill.skill}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-center">${skill.mentions}</td>
+                        <td class="whitespace-nowrap px-4 py-3">${skill.rating}</td>
+                    `;
+                    skillsTableBody.appendChild(row);
+                });
+            }
     </script>
 </body>
 </html>

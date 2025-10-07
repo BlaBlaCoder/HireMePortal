@@ -107,7 +107,7 @@ func getResume(w http.ResponseWriter, r *http.Request) {
 
 	// Construct the dynamic download URL for the client
 	resume.DownloadURL = fmt.Sprintf("/resume/download/%s", userID)
-
+	log.Print(resume)
 	json.NewEncoder(w).Encode(resume)
 	db.Close()
 }

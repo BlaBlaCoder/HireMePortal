@@ -2,11 +2,15 @@ package signupapiv1
 
 import (
 	"encoding/json"
+	"log"
 	"math"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
+
+	dbpg "achievesomethingbro/appdb"
+	localmodel "achievesomethingbro/appmodel"
 
 	"github.com/ledongthuc/pdf"
 )
@@ -122,15 +126,48 @@ func getOverallRatingLabel(percentage float64) string {
 
 // --- API Handler ---
 
-func AnalyzeResumeHandler(w http.ResponseWriter, r *http.Request) {
-	resumePath := "resumes/user_7_5143f376-f529-4b7d-815b-9420e0106b69_20251005.pdf"
+func ResumeSummaryHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("AnalyzeResumeHandler request: %s %s", r.Method, r.URL.Path)
 
-	if _, err := os.Stat(resumePath); os.IsNotExist(err) {
+	switch r.Method {
+	case http.MethodGet:
+		GetResumeSummaryHandler(w, r)
+	case http.MethodPost:
+		AnalyzeResumeHandler(w, r)
+	case http.MethodDelete:
+		DeleteResumeSummaryHandler(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+
+}
+func AnalyzeResumeHandler(w http.ResponseWriter, r *http.Request) {
+	var resume localmodel.Resume
+	if err := json.NewDecoder(r.Body).Decode(&resume); err != nil {
+		log.Printf("hereCart2: %+v", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	log.Printf("Analyze Resume Request: %+v", resume)
+	db, err := dbpg.ConnectDB()
+	if err != nil {
+		log.Printf("Failed to connect to database: %v", err)
+		http.Error(w, `{"error": "Database connection error"}`, http.StatusInternalServerError)
+		return
+	}
+	var resume_id int
+	err = db.QueryRow("select id,filepath from user_resumes where user_id=? order by uploaded_at desc limit 1", resume.UserID).Scan(&resume_id, &resume.Filepath)
+	if err != nil {
+		log.Printf("Database error retrieving resume path: %v", err)
+		http.Error(w, `{"error": "Database error retrieving resume"}`, http.StatusInternalServerError)
+		return
+	}
+	if _, err := os.Stat(resume.Filepath); os.IsNotExist(err) {
 		http.Error(w, "Resume PDF file not found on server", http.StatusInternalServerError)
 		return
 	}
 
-	resumeText, err := extractTextFromPDF1(resumePath)
+	resumeText, err := extractTextFromPDF1(resume.Filepath)
 	if err != nil {
 		http.Error(w, "Failed to parse resume PDF", http.StatusInternalServerError)
 		return
@@ -176,8 +213,75 @@ func AnalyzeResumeHandler(w http.ResponseWriter, r *http.Request) {
 
 	phoneRegex := regexp.MustCompile(`\+91-?\d{10}`)
 	response.Contact.Phone = phoneRegex.FindString(resumeText)
-
+	jsonedData, err := json.Marshal(response)
+	if err != nil {
+		log.Fatalf("Error marshalling to JSON: %v", err)
+	}
+	_, err = db.Exec("INSERT INTO user_resume_summary (user_id, resume_id, scan_data) VALUES (?, ?, ?)", resume.UserID, resume_id, jsonedData)
+	if err != nil {
+		log.Fatalf("Error marshalling to JSON: %v", err)
+	}
 	// --- Send JSON Response ---
+	if err != nil {
+		log.Printf("Failed to save resume summary: %v", err)
+		http.Error(w, `{"error": "Failed to save resume summary"}`, http.StatusInternalServerError)
+		return
+	}
+	db.Close()
 	w.Header().Set("Content-Type", "application/json")
+	log.Print(response)
 	json.NewEncoder(w).Encode(response)
+}
+
+func GetResumeSummaryHandler(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 2 || parts[2] == "" {
+		http.Error(w, `{"error": "Missing user ID in URL path"}`, http.StatusBadRequest)
+		return
+	}
+	userIDStr := parts[2]
+	if userIDStr == "" {
+		http.Error(w, "user_id is required", http.StatusBadRequest)
+		return
+	}
+	var analysisResponse AnalysisResponse
+	db, err := dbpg.ConnectDB()
+	if err != nil {
+		log.Printf("Failed to connect to database: %v", err)
+		http.Error(w, `{"error": "Database connection error"}`, http.StatusInternalServerError)
+		return
+	}
+	var summaryData string
+	err = db.QueryRow("SELECT scan_data FROM user_resume_summary WHERE user_id = ? ORDER BY created_at DESC LIMIT 1", userIDStr).Scan(&summaryData)
+	if err != nil {
+		log.Printf("Database error retrieving resume summary: %v", err)
+		http.Error(w, `{"error": "Database error retrieving resume summary"}`, http.StatusInternalServerError)
+		return
+	}
+	json.Unmarshal([]byte(summaryData), &analysisResponse)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(analysisResponse)
+	db.Close()
+}
+
+func DeleteResumeSummaryHandler(w http.ResponseWriter, r *http.Request) {
+	r.URL.Query().Get("user_id")
+	if r.URL.Query().Get("user_id") == "" {
+		http.Error(w, "Missing user_id parameter", http.StatusBadRequest)
+		return
+	}
+	db, err := dbpg.ConnectDB()
+	if err != nil {
+		log.Printf("Failed to connect to database: %v", err)
+		http.Error(w, `{"error": "Database connection error"}`, http.StatusInternalServerError)
+		return
+	}
+	_, err = db.Exec("DELETE FROM user_resume_summary WHERE user_id = ?", r.URL.Query().Get("user_id"))
+	if err != nil {
+		log.Printf("Database error deleting resume summary: %v", err)
+		http.Error(w, `{"error": "Database error deleting resume summary"}`, http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+	db.Close()
 }

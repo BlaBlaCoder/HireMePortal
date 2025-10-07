@@ -71,6 +71,7 @@ func initializeTables() {
 	model.CreateCheckoutTable()
 	model.CreateUserAddressTable()
 	model.CreateUserResumeTable()
+	model.CreateAiResumeSummaryTable()
 }
 
 // initializeAPI handles the registration of all API endpoints.
