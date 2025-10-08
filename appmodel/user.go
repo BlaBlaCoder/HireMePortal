@@ -66,9 +66,15 @@ type Company struct {
 	CompanyProfile string    `json:"company_profile,omitempty"`
 }
 
+// RecruiterPayload is a composite struct for unmarshaling the combined JSON.
+type CompanyPayload struct {
+	User    // Embedded User struct
+	Company // Embedded Company struct
+}
+
 // JobPosting represents the data structure for the 'job_postings' table.
 type JobPosting struct {
-	ID                     int       `json:"id,omitempty"`
+	ID                     StringInt `json:"id,omitempty"`
 	CompanyID              StringInt `json:"company_id"`
 	JobTitle               string    `json:"job_title"`
 	JobDescription         string    `json:"job_description"`
@@ -95,6 +101,7 @@ type JobContactMade struct {
 
 type ResumeContactMade struct {
 	ID          int       `json:"id,omitempty"`
+	UserID      StringInt `json:"user_id"`
 	ResumeID    StringInt `json:"resume_id"`
 	CompanyID   StringInt `json:"company_id"`
 	ContactDate time.Time `json:"contact_date"`

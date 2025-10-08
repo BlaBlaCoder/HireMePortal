@@ -52,20 +52,30 @@ func handleLoginRequests(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("Stored Password: %s, Hashed Input Password: %s", storedPassword, req.Password)
-	if err != nil {
-		http.Error(w, `{"message": "Internal server error"}`, http.StatusInternalServerError)
-		return
-	}
 	if req.Password != storedPassword {
 		http.Error(w, `{"message": "Invalid username or password"}`, http.StatusUnauthorized)
 		return
 	}
-
-	// Authentication successful
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	var companyID string
+	response := map[string]interface{}{
 		"message": "Login successful",
 		"user_id": userID,
-	})
+	}
+	if req.UserType == "RECRUITER" {
+		log.Print(req.UserType)
+		query = "SELECT id FROM companies WHERE user_id = ?"
+		err = db.QueryRow(query, userID).Scan(&companyID)
+		if err != nil {
+			log.Printf("DB Query Error: %v", err)
+			http.Error(w, `{"message": "Internal server error"}`, http.StatusInternalServerError)
+			return
+		}
+		log.Print(companyID)
+		response["company_id"] = companyID
+		log.Print(response)
+	}
+	// Authentication successful
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 	db.Close()
 }

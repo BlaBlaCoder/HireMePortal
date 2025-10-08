@@ -14,7 +14,7 @@ var Db *sql.DB // Global variable to hold the database connection
 // connectDB opens a database connection, pings it, and returns the DB object.
 // This function centralizes the database connection logic.
 func ConnectDB() (*sql.DB, error) {
-	Db, err := sql.Open("mysql", "root:Qwerty@123@tcp(127.0.0.1:3306)/vendor_management")
+	Db, err := sql.Open("mysql", "root:Qwerty@123@tcp(127.0.0.1:3306)/vendor_management?parseTime=true")
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database connection: %w", err)
 	}

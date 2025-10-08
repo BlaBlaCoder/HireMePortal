@@ -93,10 +93,6 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 	if userProfileID < 1 {
 		log.Print(profile)
 
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 		// Remove RETURNING id for MySQL, use Exec and LastInsertId
 		res, err := db.Exec(`
 			INSERT INTO job_seeker_profiles 

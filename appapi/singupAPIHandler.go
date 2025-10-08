@@ -20,16 +20,17 @@ func handleSignup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Decode the request body into a new User struct.
-	var newUser userModel.User
-	err := json.NewDecoder(r.Body).Decode(&newUser)
+	var companyPayload userModel.CompanyPayload
+	err := json.NewDecoder(r.Body).Decode(&companyPayload)
 	if err != nil {
 		log.Printf("Error decoding request body: %v", err)
 		// If decoding fails, return a bad request error.
 		http.Error(w, `{"error": "Invalid request body"}`, http.StatusBadRequest)
 		return
 	}
+
 	// Simple validation: check if username or password are empty.
-	if newUser.UserName == "" || newUser.FirstName == "" || newUser.LastName == "" || newUser.MobileNumber == "" || newUser.Email == "" {
+	if companyPayload.UserName == "" || companyPayload.FirstName == "" || companyPayload.LastName == "" || companyPayload.MobileNumber == "" || companyPayload.Email == "" {
 		http.Error(w, `{"error": "All fields are required"}`, http.StatusBadRequest)
 		return
 	}
@@ -42,7 +43,7 @@ func handleSignup(w http.ResponseWriter, r *http.Request) {
 	var userID int
 	var count int
 	query := "SELECT count(*) FROM users WHERE user_type = ? AND (user_name = ? OR email = ? OR mobile_number = ?)"
-	err = db.QueryRow(query, newUser.UserType, newUser.UserName, newUser.Email, newUser.MobileNumber).Scan(&count)
+	err = db.QueryRow(query, companyPayload.UserType, companyPayload.UserName, companyPayload.Email, companyPayload.MobileNumber).Scan(&count)
 	if err != nil {
 		log.Printf("Database error checking for existing user: %v", err)
 		http.Error(w, `{"error": "Database error"}`, http.StatusInternalServerError)
@@ -53,7 +54,7 @@ func handleSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	query = "SELECT id FROM users WHERE user_name = ? OR email = ? OR mobile_number = ?"
-	err = db.QueryRow(query, newUser.UserName, newUser.Email, newUser.MobileNumber).Scan(&userID)
+	err = db.QueryRow(query, companyPayload.UserName, companyPayload.Email, companyPayload.MobileNumber).Scan(&userID)
 	if err != sql.ErrNoRows && err != nil {
 		log.Printf("Database error retrieving user ID: %v", err)
 		http.Error(w, `{"error": "Database error"}`, http.StatusInternalServerError)
@@ -63,39 +64,65 @@ func handleSignup(w http.ResponseWriter, r *http.Request) {
 	sqlStmt := `
 	INSERT INTO users (user_name, first_name, last_name, mobile_number, email, gender, date_of_birth, password,user_type)
 	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-	log.Printf("New user signed up: %s", newUser.UserName)
+	log.Printf("New user signed up: %s", companyPayload.UserName)
 	// Execute the INSERT statement.
-	_, err = db.Exec(sqlStmt,
-		newUser.UserName,
-		newUser.FirstName,
-		newUser.LastName,
-		newUser.MobileNumber,
-		newUser.Email,
-		newUser.Gender,
-		newUser.DateOfBirth,
-		newUser.Password,
-		newUser.UserType,
+	result, err := db.Exec(sqlStmt,
+		companyPayload.UserName,
+		companyPayload.FirstName,
+		companyPayload.LastName,
+		companyPayload.MobileNumber,
+		companyPayload.Email,
+		companyPayload.Gender,
+		companyPayload.DateOfBirth,
+		companyPayload.Password,
+		companyPayload.UserType,
 	)
 	if err != nil {
-		log.Printf("Failed to insert new user: %v", err)
+		log.Printf("Failed to insert new user: %v user data %v", err, companyPayload)
 		http.Error(w, `{"error": "Failed to create user"}`, http.StatusInternalServerError)
 		return
 	}
-	query = "SELECT id FROM users WHERE user_name = ? and user_type=?"
-	err = db.QueryRow(query, newUser.UserName, newUser.UserType).Scan(&userID)
+	insertedId, err := result.LastInsertId()
 	if err != nil {
-		log.Printf("Error fetching user ID: %v", err)
-		http.Error(w, `{"error": "Failed to retrieve user ID"}`, http.StatusInternalServerError)
+		log.Printf("Failed to retrieve last insert ID: %v", err)
+		http.Error(w, `{"error": "Failed to create user"}`, http.StatusInternalServerError)
 		return
 	}
-	// Respond with a success message.
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	response := map[string]interface{}{
 		"message":   "User created successfully!",
 		"user_id":   userID,
-		"user_name": newUser.UserName,
-	})
-	log.Printf("New user signed up: %s (ID: %d)", newUser.UserName, userID)
+		"user_name": companyPayload.UserName,
+	}
+	if companyPayload.UserType == "RECRUITER" || companyPayload.UserType == "ADVERTISER" {
+		companyStmt := `
+	INSERT INTO companies (user_id, company_name, gst_number)
+	VALUES (?, ?, ?)`
+		comRes, err := db.Exec(companyStmt,
+			insertedId,
+			companyPayload.CompanyName,
+			companyPayload.GSTNumber,
+		)
+		if err != nil {
+			log.Print(companyPayload)
+			log.Printf("Failed to insert company details: %v", err)
+			http.Error(w, `{"error": "Failed to create company details"}`, http.StatusInternalServerError)
+			return
+		}
+		fmt.Println("Company details inserted successfully")
+		compId, err := comRes.LastInsertId()
+		response["company_id"] = compId
+	}
+
+	if err != nil {
+		log.Printf("Failed to insert new user: %v user data %v", err, companyPayload)
+		http.Error(w, `{"error": "Failed to create user"}`, http.StatusInternalServerError)
+		return
+	}
+
+	// Respond with a success message.
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(response)
+	log.Printf("New user signed up: %s (ID: %d)", companyPayload.UserName, userID)
 	db.Close()
 }
 
@@ -166,6 +193,10 @@ func InitializeAPI() {
 	http.HandleFunc("/login", handleLoginRequests)
 	http.HandleFunc("/analyze-resume", ResumeSummaryHandler)
 	http.HandleFunc("/analyze-resume/", ResumeSummaryHandler)
+	http.HandleFunc("/resume-visit", HandleResumeContactsRequests)
+	http.HandleFunc("/resume-visit/", HandleResumeContactsRequests)
+	http.HandleFunc("/job-posting", HandleJobDescriptionRequests)
+	http.HandleFunc("/job-posting/", HandleJobDescriptionRequests)
 	http.HandleFunc("/index.html", templateHandler)
 	http.HandleFunc("/", templateHandler)
 	http.HandleFunc("/testing", TestingHandler)

@@ -294,6 +294,11 @@ func analyzeResume(w http.ResponseWriter, r *http.Request) {
 	}
 	// eSResumeResponse, err := SearchResumeKeywords(dbpg.EsClient, "Kubernetes")
 	eSSkillsResponse, err := SearchSkills(dbpg.EsClient, "Kubernetes")
+	if err != nil {
+		log.Printf("Error searching skills in Elasticsearch: %v", err)
+		http.Error(w, `{"error": "Failed to search skills in resume"}`, http.StatusInternalServerError)
+		return
+	}
 	// Loop through the slice of individual results
 	// for i, hit := range eSResumeResponse.Hits.Hits {
 	// The data is contained within the '_source' field, which is unmarshalled
