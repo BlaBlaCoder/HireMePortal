@@ -15,7 +15,12 @@ func HandleJobSeekerProfileRequests(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		GetProfile(w, r)
+		parts := strings.Split(r.URL.Path, "/")
+		if len(parts) < 4 || parts[3] == "all" {
+			GetAllProfiles(w, r)
+		} else if len(parts) < 4 || parts[3] != "" {
+			GetProfile(w, r)
+		}
 	case http.MethodPost:
 		CreateProfile(w, r)
 	case http.MethodPut:
@@ -25,6 +30,51 @@ func HandleJobSeekerProfileRequests(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
+}
+
+func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
+
+	var profiles []localmodel.JobSeekerProfile
+	db, err := dbpg.ConnectDB()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	rows, err := db.Query("SELECT id, user_id, profile_summary, location, current_company, open_for_locations, salary_range, work_ex, overall_work_ex, skills, job_type, job_title FROM job_seeker_profiles")
+	if err != nil {
+		http.Error(w, "DB query failed", http.StatusInternalServerError)
+		return
+	}
+	for rows.Next() {
+		var profile localmodel.JobSeekerProfile
+		// Scan logic is the same as in GetJobDescriptions
+		err := rows.Scan(
+			&profile.ID, &profile.UserId, &profile.ProfileSummary, &profile.Location,
+			&profile.Currentcompany, &profile.OpenForLocations, &profile.SalaryRange,
+			&profile.WorkEx, &profile.OverallWorkEx, &profile.Skills, &profile.JobType,
+			&profile.JobTitle)
+		if err != nil {
+			log.Printf("Database error scanning row: %v", err)
+			continue // Continue to next row on scan error
+		}
+		profiles = append(profiles, profile)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Printf("Database iteration error: %v", err)
+	}
+
+	if err == sql.ErrNoRows {
+		http.Error(w, "Profile not found", http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	log.Print(profiles)
+	json.NewEncoder(w).Encode(profiles)
+	db.Close()
 }
 
 func GetProfile(w http.ResponseWriter, r *http.Request) {
