@@ -1480,12 +1480,221 @@
             updateDashboardResumeSection(currentUserId);
         }
 window.loadCompanyDashboard = function() {
+    
+    // --- 📢 ADVERTISEMENT SETUP ---
+    // This block runs only once to create and manage the ad banners.
+    (function setupAdvertisements() {
+        // Exit if ads are already on the page
+        if (document.getElementById('left-ads-container')) return;
+
+        // 1. Ad Data with company/product names and multiple media types
+        const adData = [
+            { id: 'ad1', type: 'image', company: 'Nature Escapes', product: 'Mountain Hikes', link: 'https://example.com/ad1', mediaUrl: 'https://picsum.photos/id/1015/300/400' },
+            { id: 'ad2', type: 'video', company: 'Ocean Waves', product: 'Relaxing Sounds', link: 'https://example.com/ad2', mediaUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
+            { id: 'ad3', type: 'image', company: 'City Life', product: 'Urban Photography', link: 'https://example.com/ad3', mediaUrl: 'https://picsum.photos/id/1025/300/400' },
+            { id: 'ad4', type: 'gif', company: 'Pixel Art', product: 'Creative Designs', link: 'https://example.com/ad4', mediaUrl: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTFqbnJ2b3E0bnhuaTJkOGVjOXhqdGlmaThoaDFoMG5ob3Rya3VqZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btXIEl4pvo0692g/giphy.gif' },
+            { id: 'ad5', type: 'image', company: 'Vintage Co.', product: 'Classic Cars', link: 'https://example.com/ad5', mediaUrl: 'https://picsum.photos/id/106/300/400' },
+            { id: 'ad6', type: 'image', company: 'Tech Hub', product: 'Latest Gadgets', link: 'https://example.com/ad6', mediaUrl: 'https://picsum.photos/id/219/300/400' },
+            { id: 'ad7', type: 'video', company: 'Adventures', product: 'Explore More', link: 'https://example.com/ad7', mediaUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4' },
+            { id: 'ad8', type: 'image', company: 'Artisan Cafe', product: 'Fresh Coffee', link: 'https://example.com/ad8', mediaUrl: 'https://picsum.photos/id/431/300/400' },
+        ];
+
+        // 2. Initialize or load click counters from Local Storage
+        let adClicks = JSON.parse(localStorage.getItem('adClicks')) || {};
+        adData.forEach(ad => {
+            if (!adClicks[ad.id]) {
+                adClicks[ad.id] = 0;
+            }
+        });
+        const saveClicks = () => localStorage.setItem('adClicks', JSON.stringify(adClicks));
+
+        // 3. Create HTML containers for the ads
+        const leftContainer = document.createElement('div');
+        leftContainer.id = 'left-ads-container';
+        leftContainer.className = 'ad-container';
+
+        const rightContainer = document.createElement('div');
+        rightContainer.id = 'right-ads-container';
+        rightContainer.className = 'ad-container';
+
+        for (let i = 1; i <= 3; i++) {
+            leftContainer.innerHTML += `<div class="ad-banner-slot" id="ad-left-${i}"></div>`;
+            rightContainer.innerHTML += `<div class="ad-banner-slot" id="ad-right-${i}"></div>`;
+        }
+
+        document.body.prepend(leftContainer);
+        document.body.appendChild(rightContainer);
+        
+        // 4. Inject CSS to support media elements and text overlays
+        const adStyles = `
+            body {
+                background-color: #f0f2f5;
+            }
+            .ad-container {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                width: 160px;
+                padding: 20px 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 99;
+            }
+            #left-ads-container { left: 20px; }
+            #right-ads-container { right: 20px; }
+            
+            .ad-banner-slot {
+                width: 150px;
+                height: 200px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                cursor: pointer;
+                opacity: 1;
+                transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease-out;
+                position: relative; /* Needed for positioning the overlay */
+                overflow: hidden;   /* Hides media overflow */
+                background-color: #000; /* Fallback for slow-loading media */
+            }
+            .ad-banner-slot:hover {
+                transform: scale(1.05);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            }
+            .ad-media {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* Ensures media fills the container */
+            }
+            .ad-overlay {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 8px;
+                color: #fff;
+                background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+                pointer-events: none; /* Allows clicks to pass through to the parent slot */
+            }
+            .ad-company {
+                font-size: 0.8rem;
+                font-weight: bold;
+                display: block;
+            }
+            .ad-product {
+                font-size: 0.7rem;
+                display: block;
+            }
+            #dashboardContent {
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            @media (max-width: 1280px) {
+                .ad-container { display: none; }
+                #dashboardContent { margin: 0 20px; }
+            }
+        `;
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = adStyles;
+        document.head.appendChild(styleSheet);
+
+        // 5. [MODIFIED] Ad Rotation Logic to ensure unique ads
+        const adSlots = document.querySelectorAll('.ad-banner-slot');
+        function rotateAds() {
+            // Shuffle the ads to randomize them
+            const shuffledAds = [...adData].sort(() => 0.5 - Math.random());
+            
+            adSlots.forEach((slot, index) => {
+                // Fade out the slot
+                slot.style.opacity = '0';
+                
+                // After the fade-out, build the new ad content and fade in
+                setTimeout(() => {
+                    // Hide slot if there are not enough unique ads to fill it
+                    if (index >= shuffledAds.length) {
+                        slot.style.display = 'none'; 
+                        return;
+                    }
+                    slot.style.display = 'block';
+
+                    // Assign a unique ad from the shuffled list for each slot
+                    const ad = shuffledAds[index];
+                    
+                    // Clear previous content
+                    slot.innerHTML = '';
+                    
+                    // Set data attributes for click handling
+                    slot.dataset.link = ad.link;
+                    slot.dataset.id = ad.id;
+
+                    // Create media element based on type
+                    let mediaElement;
+                    if (ad.type === 'video') {
+                        mediaElement = document.createElement('video');
+                        mediaElement.autoplay = true;
+                        mediaElement.muted = true;
+                        mediaElement.loop = true;
+                        mediaElement.playsInline = true;
+                    } else { // Handles 'image' and 'gif'
+                        mediaElement = document.createElement('img');
+                    }
+                    mediaElement.src = ad.mediaUrl;
+                    mediaElement.className = 'ad-media';
+                    
+                    // Create text overlay
+                    const overlay = document.createElement('div');
+                    overlay.className = 'ad-overlay';
+                    overlay.innerHTML = `
+                        <span class="ad-company">${ad.company}</span>
+                        <span class="ad-product">${ad.product}</span>
+                    `;
+
+                    // Append new content and fade in
+                    slot.appendChild(mediaElement);
+                    slot.appendChild(overlay);
+                    slot.style.opacity = '1';
+
+                }, 300); // Delay matches the CSS transition duration
+            });
+        }
+
+
+        // 6. Click Handling Logic
+        function handleAdClick(event) {
+            const adSlot = event.target.closest('.ad-banner-slot');
+            if (adSlot && adSlot.dataset.link) {
+                const adId = adSlot.dataset.id;
+                const adLink = adSlot.dataset.link;
+                
+                adClicks[adId]++;
+                saveClicks();
+                console.log(`Ad '${adId}' clicked. Total clicks: ${adClicks[adId]}`);
+                
+                window.open(adLink, '_blank');
+            }
+        }
+        
+        leftContainer.addEventListener('click', handleAdClick);
+        rightContainer.addEventListener('click', handleAdClick);
+
+        // 7. Start the ad rotation
+        rotateAds();
+        setInterval(rotateAds, 15000);
+    })();
+
+
+    // --- MAIN DASHBOARD CONTENT & LOGIC (UNCHANGED) ---
     const paidText = currentIsPaidMember ? "PREMIUM: Access to full contact details." : "FREE TIER: Contact details are masked.";
     const upgradeLink = currentIsPaidMember ? '' : `<p class="text-sm text-red-500 font-bold mt-4">Upgrade your plan to view contact details.</p>`;
     const currCompany = localStorage.getItem('currentCompanyId');
     const content = `
         <div class="space-y-8">
-            <div class="max-w-4xl mx-auto space-y-8">
+            <div class="mx-auto space-y-8">
                 <div class="p-8 bg-white rounded-2xl shadow-xl border border-indigo-400/50 space-y-6">
                     <h3 class="text-2xl font-bold text-indigo-700 border-b pb-3">Recruiter Tools</h3>
                     <p class="text-sm text-gray-600">Create job listings or browse profiles of talented jobseekers.</p>
@@ -1509,7 +1718,6 @@ window.loadCompanyDashboard = function() {
                             Hide
                         </button>
                     </div>
-                    {/* ## THIS IS THE MODIFIED LINE ## */}
                     <div id="listingsGrid" class="space-y-4 max-h-[65vh] overflow-y-auto pr-2">
                     </div>
                 </div>
@@ -1591,7 +1799,7 @@ window.loadCompanyDashboard = function() {
                     <div class="mt-3">
                         <h3 class="text-2xl font-bold text-indigo-700 border-b pb-3 mb-4">Edit Job Listing</h3>
                         <form id="editJobForm" class="space-y-4">
-                            <input type="hidden" id="edit_job_id" name="id">
+                             <input type="hidden" id="edit_job_id" name="id">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label for="edit_job_title" class="block text-sm font-medium text-gray-700">Job Title</label>
@@ -1709,6 +1917,7 @@ window.loadCompanyDashboard = function() {
     createJobBtn.addEventListener('click', () => {
         const deadlineInput = document.getElementById('application_deadline');
         const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         now.setDate(now.getDate() + 30);
         deadlineInput.value = now.toISOString().slice(0, 16);
         modal.style.display = 'block';
@@ -1818,7 +2027,7 @@ window.loadCompanyDashboard = function() {
             viewJobseekersBtn.disabled = false;
         }
     });
-
+    
     // --- Handler for status updates ---
     async function handleStatusUpdate(event) {
         const selectElement = event.target;
@@ -1856,6 +2065,7 @@ window.loadCompanyDashboard = function() {
         }
     }
     
+    // --- Helper Functions ---
     async function updateActiveListingsCount() {
         const companyId = localStorage.getItem('currentCompanyId');
         if (!companyId) {
@@ -2057,7 +2267,9 @@ window.loadCompanyDashboard = function() {
         document.getElementById('edit_salary_range').value = job.salary_range;
         document.getElementById('edit_required_qualifications').value = job.required_qualifications;
         document.getElementById('edit_skills_required').value = job.skills_required;
-        document.getElementById('edit_application_deadline').value = new Date(job.application_deadline).toISOString().slice(0, 16);
+        const deadline = new Date(job.application_deadline);
+        deadline.setMinutes(deadline.getMinutes() - deadline.getTimezoneOffset());
+        document.getElementById('edit_application_deadline').value = deadline.toISOString().slice(0, 16);
         document.getElementById('edit_job_posting_status').value = job.job_posting_status;
         editModal.style.display = 'block';
     }
@@ -2089,7 +2301,7 @@ window.loadCompanyDashboard = function() {
     });
 
     updateActiveListingsCount();
-}
+};
         window.loadAdvertiserDashboard = function() {
             const content = `
                 <div class="p-8 bg-white rounded-2xl shadow-xl border border-purple-400/50 space-y-6">
