@@ -219,7 +219,8 @@ func CreateAllTables() {
         contact_date DATE NOT NULL,
 		contacted_status ENUM('CONTACTED', 'PENDING', 'REJECTED', 'SELECTED') NOT NULL DEFAULT 'PENDING',
         FOREIGN KEY (job_id) REFERENCES job_postings(id) ON DELETE CASCADE,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+		UNIQUE KEY uq_job_user_company (job_id, user_id, company_id)
     );	`
 	_, err = db.Exec(createTableSQL)
 	if err != nil {
@@ -235,7 +236,8 @@ func CreateAllTables() {
 		status ENUM('RESUME_CHECKED','CONTACTED', 'PENDING', 'REJECTED', 'SELECTED') NOT NULL DEFAULT 'PENDING',
 		FOREIGN KEY (resume_id) REFERENCES user_resumes(id) ON DELETE CASCADE,
 		FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
-		FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+		FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+		UNIQUE KEY uq_resume_user_company (resume_id, user_id, company_id)
 	);`
 	_, err = db.Exec(createTableSQL)
 	if err != nil {

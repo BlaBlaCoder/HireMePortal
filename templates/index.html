@@ -1487,514 +1487,529 @@
             const content = `
                 <div class="space-y-8">
                     <div class="max-w-4xl mx-auto space-y-8">
-        <div class="p-8 bg-white rounded-2xl shadow-xl border border-indigo-400/50 space-y-6">
-            <h3 class="text-2xl font-bold text-indigo-700 border-b pb-3">Job Management (CRUD)</h3>
-            <p class="text-sm text-gray-600">Manage job descriptions and track applicant flow.</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button id="createJobBtn" class="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    + Create New Job Listing
-                </button>
-                <button id="viewListingsBtn" class="py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-400">
-                    View Active Listings
-                </button>
-            </div>
-        </div>
+                        <div class="p-8 bg-white rounded-2xl shadow-xl border border-indigo-400/50 space-y-6">
+                            <h3 class="text-2xl font-bold text-indigo-700 border-b pb-3">Recruiter Tools</h3>
+                            <p class="text-sm text-gray-600">Create job listings or browse profiles of talented jobseekers.</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <button id="createJobBtn" class="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    + Create New Job
+                                </button>
+                                <button id="viewListingsBtn" class="py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-400">
+                                    View Active Listings
+                                </button>
+                                <button id="viewJobseekersBtn" class="py-2 px-4 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600">
+                                    View Jobseeker Profiles
+                                </button>
+                            </div>
+                        </div>
 
-        <div id="listingsContainer" class="hidden space-y-6">
-            <div class="flex justify-between items-center">
-                <h3 class="text-2xl font-bold text-indigo-700">Active Job Listings</h3>
-                <button id="hideListingsBtn" class="py-2 px-4 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600">
-                    Hide Listings
-                </button>
-            </div>
-            <div id="listingsGrid" class="space-y-4">
-                </div>
-        </div>
-    </div>
+                        <div id="listingsContainer" class="hidden space-y-6">
+                            <div class="flex justify-between items-center">
+                                <h3 id="listingsHeader" class="text-2xl font-bold text-indigo-700">Active Job Listings</h3>
+                                <button id="hideListingsBtn" class="py-2 px-4 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600">
+                                    Hide
+                                </button>
+                            </div>
+                            <div id="listingsGrid" class="space-y-4">
+                                </div>
+                        </div>
+                    </div>
 
-    <div id="jobFormModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-         <div class="relative top-10 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
-            <div class="mt-3">
-                <h3 class="text-2xl font-bold text-indigo-700 border-b pb-3 mb-4">Create New Job Listing</h3>
-                
-                <form id="newJobForm" class="space-y-4">
-                    <input type="hidden" id="company_id" name="company_id" value="3">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="job_title" class="block text-sm font-medium text-gray-700">Job Title</label>
-                            <input type="text" name="job_title" id="job_title" value="Backend Go Developer" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                    <div id="jobFormModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+                        <div class="relative top-10 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
+                            <div class="mt-3">
+                                <h3 class="text-2xl font-bold text-indigo-700 border-b pb-3 mb-4">Create New Job Listing</h3>
+                                <form id="newJobForm" class="space-y-4">
+                                    <input type="hidden" id="company_id" name="company_id" value="3">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="job_title" class="block text-sm font-medium text-gray-700">Job Title</label>
+                                            <input type="text" name="job_title" id="job_title" value="Backend Go Developer" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label for="job_location" class="block text-sm font-medium text-gray-700">Job Location</label>
+                                            <input type="text" name="job_location" id="job_location" value="Gurugram, Haryana" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="job_description" class="block text-sm font-medium text-gray-700">Job Description</label>
+                                        <textarea name="job_description" id="job_description" rows="3" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>Developing high-performance APIs and services.</textarea>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label for="number_of_openings" class="block text-sm font-medium text-gray-700">Openings</label>
+                                            <input type="number" name="number_of_openings" id="number_of_openings" value="2" min="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label for="job_type" class="block text-sm font-medium text-gray-700">Job Type</label>
+                                            <select id="job_type" name="job_type" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                                <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="required_experience" class="block text-sm font-medium text-gray-700">Experience (Years)</label>
+                                            <input type="text" name="required_experience" id="required_experience" value="3-5 years" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="salary_range" class="block text-sm font-medium text-gray-700">Salary Range (PA)</label>
+                                            <input type="text" name="salary_range" id="salary_range" value="₹20,00,000 - ₹30,00,000 PA" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label for="required_qualifications" class="block text-sm font-medium text-gray-700">Qualifications</label>
+                                            <input type="text" name="required_qualifications" id="required_qualifications" value="B.Tech in Computer Science" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="skills_required" class="block text-sm font-medium text-gray-700">Skills Required (comma-separated)</label>
+                                        <input type="text" name="skills_required" id="skills_required" value="Go, PostgreSQL, Docker, gRPC" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="application_deadline" class="block text-sm font-medium text-gray-700">Application Deadline</label>
+                                            <input type="datetime-local" name="application_deadline" id="application_deadline" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label for="job_posting_status" class="block text-sm font-medium text-gray-700">Status</label>
+                                            <select id="job_posting_status" name="job_posting_status" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                                <option>OPEN</option><option>CLOSED</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-end pt-4 space-x-4 border-t mt-6">
+                                        <button id="cancelBtn" type="button" class="py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-400">Cancel</button>
+                                        <button type="submit" class="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700">Create Job</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <div>
-                            <label for="job_location" class="block text-sm font-medium text-gray-700">Job Location</label>
-                            <input type="text" name="job_location" id="job_location" value="Gurugram, Haryana" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+
+                    <div id="editJobModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+                        <div class="relative top-10 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
+                            <div class="mt-3">
+                                <h3 class="text-2xl font-bold text-indigo-700 border-b pb-3 mb-4">Edit Job Listing</h3>
+                                <form id="editJobForm" class="space-y-4">
+                                    <input type="hidden" id="edit_job_id" name="id">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="edit_job_title" class="block text-sm font-medium text-gray-700">Job Title</label>
+                                            <input type="text" name="job_title" id="edit_job_title" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label for="edit_job_location" class="block text-sm font-medium text-gray-700">Job Location</label>
+                                            <input type="text" name="job_location" id="edit_job_location" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="edit_job_description" class="block text-sm font-medium text-gray-700">Job Description</label>
+                                        <textarea name="job_description" id="edit_job_description" rows="3" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required></textarea>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                            <label for="edit_number_of_openings" class="block text-sm font-medium text-gray-700">Openings</label>
+                                            <input type="number" name="number_of_openings" id="edit_number_of_openings" min="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label for="edit_job_type" class="block text-sm font-medium text-gray-700">Job Type</label>
+                                            <select id="edit_job_type" name="job_type" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                                <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option>
+                                            </select>
+                                        </div>
+                                            <div>
+                                            <label for="edit_required_experience" class="block text-sm font-medium text-gray-700">Experience (Years)</label>
+                                            <input type="text" name="required_experience" id="edit_required_experience" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                    </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="edit_salary_range" class="block text-sm font-medium text-gray-700">Salary Range (PA)</label>
+                                            <input type="text" name="salary_range" id="edit_salary_range" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label for="edit_required_qualifications" class="block text-sm font-medium text-gray-700">Qualifications</label>
+                                            <input type="text" name="required_qualifications" id="edit_required_qualifications" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="edit_skills_required" class="block text-sm font-medium text-gray-700">Skills Required (comma-separated)</label>
+                                        <input type="text" name="skills_required" id="edit_skills_required" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="edit_application_deadline" class="block text-sm font-medium text-gray-700">Application Deadline</label>
+                                            <input type="datetime-local" name="application_deadline" id="edit_application_deadline" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label for="edit_job_posting_status" class="block text-sm font-medium text-gray-700">Status</label>
+                                                <select id="edit_job_posting_status" name="job_posting_status" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                                <option>OPEN</option><option>CLOSED</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-end pt-4 space-x-4 border-t mt-6">
+                                        <button id="cancelEditBtn" type="button" class="py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-400">Cancel</button>
+                                        <button type="submit" class="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <label for="job_description" class="block text-sm font-medium text-gray-700">Job Description</label>
-                        <textarea name="job_description" id="job_description" rows="3" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>Developing high-performance APIs and services.</textarea>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                         <div>
-                            <label for="number_of_openings" class="block text-sm font-medium text-gray-700">Openings</label>
-                            <input type="number" name="number_of_openings" id="number_of_openings" value="2" min="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                        </div>
-                        <div>
-                            <label for="job_type" class="block text-sm font-medium text-gray-700">Job Type</label>
-                            <select id="job_type" name="job_type" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option>
-                            </select>
-                        </div>
-                         <div>
-                            <label for="required_experience" class="block text-sm font-medium text-gray-700">Experience (Years)</label>
-                            <input type="text" name="required_experience" id="required_experience" value="3-5 years" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+
+                    <div id="resumeViewerModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center p-4">
+                        <div class="relative mx-auto border w-full max-w-4xl h-[95vh] shadow-lg rounded-md bg-white flex flex-col">
+                            <div class="flex justify-between items-center p-3 border-b mb-2">
+                                <h3 id="resumeModalHeader" class="text-xl font-semibold text-gray-800">Resume Viewer</h3>
+                                <button id="closeResumeModalBtn" class="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
+                            </div>
+                            <div class="flex-grow p-2">
+                                <iframe id="resumeFrame" class="w-full h-full border-0" src=""></iframe>
+                            </div>
                         </div>
                     </div>
-                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="salary_range" class="block text-sm font-medium text-gray-700">Salary Range (PA)</label>
-                            <input type="text" name="salary_range" id="salary_range" value="₹20,00,000 - ₹30,00,000 PA" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                        </div>
-                        <div>
-                            <label for="required_qualifications" class="block text-sm font-medium text-gray-700">Qualifications</label>
-                            <input type="text" name="required_qualifications" id="required_qualifications" value="B.Tech in Computer Science" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                        </div>
-                    </div>
-                    <div>
-                        <label for="skills_required" class="block text-sm font-medium text-gray-700">Skills Required (comma-separated)</label>
-                        <input type="text" name="skills_required" id="skills_required" value="Go, PostgreSQL, Docker, gRPC" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="application_deadline" class="block text-sm font-medium text-gray-700">Application Deadline</label>
-                            <input type="datetime-local" name="application_deadline" id="application_deadline" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                        </div>
-                        <div>
-                            <label for="job_posting_status" class="block text-sm font-medium text-gray-700">Status</label>
-                             <select id="job_posting_status" name="job_posting_status" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                <option>OPEN</option><option>CLOSED</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-end pt-4 space-x-4 border-t mt-6">
-                        <button id="cancelBtn" type="button" class="py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-400">Cancel</button>
-                        <button type="submit" class="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700">Create Job</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-<div id="editJobModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-     <div class="relative top-10 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
-        <div class="mt-3">
-            <h3 class="text-2xl font-bold text-indigo-700 border-b pb-3 mb-4">Edit Job Listing</h3>
-            
-            <form id="editJobForm" class="space-y-4">
-                <input type="hidden" id="edit_job_id" name="id">
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="edit_job_title" class="block text-sm font-medium text-gray-700">Job Title</label>
-                        <input type="text" name="job_title" id="edit_job_title" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                    </div>
-                    <div>
-                        <label for="edit_job_location" class="block text-sm font-medium text-gray-700">Job Location</label>
-                        <input type="text" name="job_location" id="edit_job_location" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                    </div>
-                </div>
-                <div>
-                    <label for="edit_job_description" class="block text-sm font-medium text-gray-700">Job Description</label>
-                    <textarea name="job_description" id="edit_job_description" rows="3" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required></textarea>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                        <label for="edit_number_of_openings" class="block text-sm font-medium text-gray-700">Openings</label>
-                        <input type="number" name="number_of_openings" id="edit_number_of_openings" min="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                    </div>
-                    <div>
-                        <label for="edit_job_type" class="block text-sm font-medium text-gray-700">Job Type</label>
-                        <select id="edit_job_type" name="job_type" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option>
-                        </select>
-                    </div>
-                        <div>
-                        <label for="edit_required_experience" class="block text-sm font-medium text-gray-700">Experience (Years)</label>
-                        <input type="text" name="required_experience" id="edit_required_experience" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                    </div>
-                </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="edit_salary_range" class="block text-sm font-medium text-gray-700">Salary Range (PA)</label>
-                        <input type="text" name="salary_range" id="edit_salary_range" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                    </div>
-                    <div>
-                        <label for="edit_required_qualifications" class="block text-sm font-medium text-gray-700">Qualifications</label>
-                        <input type="text" name="required_qualifications" id="edit_required_qualifications" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                    </div>
-                </div>
-                <div>
-                    <label for="edit_skills_required" class="block text-sm font-medium text-gray-700">Skills Required (comma-separated)</label>
-                    <input type="text" name="skills_required" id="edit_skills_required" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="edit_application_deadline" class="block text-sm font-medium text-gray-700">Application Deadline</label>
-                        <input type="datetime-local" name="application_deadline" id="edit_application_deadline" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-                    </div>
-                    <div>
-                        <label for="edit_job_posting_status" class="block text-sm font-medium text-gray-700">Status</label>
-                            <select id="edit_job_posting_status" name="job_posting_status" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            <option>OPEN</option><option>CLOSED</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex items-center justify-end pt-4 space-x-4 border-t mt-6">
-                    <button id="cancelEditBtn" type="button" class="py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-400">Cancel</button>
-                    <button type="submit" class="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
                     <div class="p-8 bg-white rounded-2xl shadow-xl border border-green-400/50 space-y-6">
                         <h3 class="text-2xl font-bold text-green-700 border-b pb-3">Candidate Search & Matching</h3>
                         <p class="text-sm text-gray-600">${paidText}</p>
-                        
                         <form id="candidateSearchForm" class="space-y-4">
                             <input type="text" id="searchKeywords" placeholder="Enter required skills (e.g., Kubernetes, Python, 5 years)" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3" required>
                             <button type="submit" class="w-full py-2 px-4 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700">
                                 Search Matching Resumes (Elastic)
                             </button>
                         </form>
-
-                        <div id="candidateResults" class="mt-6 space-y-4">
-                            <h4 class="font-bold text-gray-700">Top Matches (Simulated):</h4>
-                            <div class="p-4 border rounded-lg bg-gray-50 space-y-2">
-                                <p class="font-semibold text-lg">Candidate 1: Senior DevOps Engineer</p>
-                                <p class="text-sm text-gray-700">**Skills:** Go, Docker, AWS, Terraform.</p>
-                                ${currentIsPaidMember ? `
-                                    <p class="text-sm text-green-700 font-bold">**Contact:** John Doe, 555-1234, john.d@email.com</p>
-                                ` : `<p class="text-sm text-red-600 font-bold">Contact: [Masked: Upgrade to Premium]</p>`}
-                            </div>
-                            <div class="p-4 border rounded-lg bg-gray-50 space-y-2">
-                                <p class="font-semibold text-lg">Candidate 2: Full Stack Developer</p>
-                                <p class="text-sm text-gray-700">**Skills:** React, Python, AWS Lambda.</p>
-                                ${currentIsPaidMember ? `
-                                    <p class="text-sm text-green-700 font-bold">**Contact:** Alice Smith, 555-9876, alice.s@email.com</p>
-                                ` : `<p class="text-sm text-red-600 font-bold">Contact: [Masked: Upgrade to Premium]</p>`}
-                            </div>
-                            ${upgradeLink}
-                        </div>
+                        <div id="candidateResults" class="mt-6 space-y-4"></div>
+                        ${upgradeLink}
                     </div>
                 </div>
             `;
             document.getElementById('dashboardContent').innerHTML = content;
-             // Attach form handler (simulated search)
-            document.getElementById('candidateSearchForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const keywords = document.getElementById('searchKeywords').value;
-                const resultsDiv = document.getElementById('candidateResults');
-                resultsDiv.innerHTML = `<p class="text-center text-blue-600">Searching for resumes matching "${keywords}"...</p>`;
-                
-                // Simulate fetching and displaying tiered data
-                setTimeout(() => {
-                    const paidContact = currentIsPaidMember ? `<p class="text-sm text-green-700 font-bold">**Contact:** John Doe, 555-1234, john.d@email.com</p>` : `<p class="text-sm text-red-600 font-bold">Contact: [Masked: Upgrade to Premium]</p>`;
-                    resultsDiv.innerHTML = `
-                        <h4 class="font-bold text-gray-700">Top Matches for "${keywords}":</h4>
-                        <div class="p-4 border rounded-lg bg-gray-50 space-y-2">
-                            <p class="font-semibold text-lg">Candidate 3: Senior Product Manager</p>
-                            <p class="text-sm text-gray-700">**Skills:** Product Management, Jira, Agile.</p>
-                            ${paidContact}
+
+            // --- Get Element References ---
+            const modal = document.getElementById('jobFormModal');
+            const createJobBtn = document.getElementById('createJobBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const newJobForm = document.getElementById('newJobForm');
+            const viewListingsBtn = document.getElementById('viewListingsBtn');
+            const listingsContainer = document.getElementById('listingsContainer');
+            const listingsGrid = document.getElementById('listingsGrid');
+            const hideListingsBtn = document.getElementById('hideListingsBtn');
+            const listingsHeader = document.getElementById('listingsHeader');
+            const viewJobseekersBtn = document.getElementById('viewJobseekersBtn');
+            const editModal = document.getElementById('editJobModal');
+            const editJobForm = document.getElementById('editJobForm');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            const resumeViewerModal = document.getElementById('resumeViewerModal');
+            const closeResumeModalBtn = document.getElementById('closeResumeModalBtn');
+            const resumeFrame = document.getElementById('resumeFrame');
+            const resumeModalHeader = document.getElementById('resumeModalHeader');
+
+
+            // --- Event Listeners for Modals ---
+            createJobBtn.addEventListener('click', () => {
+                const deadlineInput = document.getElementById('application_deadline');
+                const now = new Date();
+                now.setDate(now.getDate() + 30);
+                deadlineInput.value = now.toISOString().slice(0, 16);
+                modal.style.display = 'block';
+            });
+
+            cancelBtn.addEventListener('click', () => modal.style.display = 'none');
+            cancelEditBtn.addEventListener('click', () => editModal.style.display = 'none');
+            hideListingsBtn.addEventListener('click', () => listingsContainer.classList.add('hidden'));
+            closeResumeModalBtn.addEventListener('click', () => {
+                resumeViewerModal.style.display = 'none';
+                resumeFrame.src = 'about:blank';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) modal.style.display = 'none';
+                if (event.target === editModal) editModal.style.display = 'none';
+                if (event.target === resumeViewerModal) {
+                    resumeViewerModal.style.display = 'none';
+                    resumeFrame.src = 'about:blank';
+                }
+            });
+
+            // --- Event Listener for Form Submission ---
+            newJobForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const formData = new FormData(newJobForm);
+                const jobData = {};
+                formData.forEach((value, key) => {
+                    jobData[key] = key === 'number_of_openings' ? parseInt(value, 10) : value;
+                });
+                jobData.posting_date = new Date().toISOString();
+                jobData.application_deadline = new Date(jobData.application_deadline).toISOString();
+                jobData['company_id'] = localStorage.getItem('currentCompanyId');
+
+                try {
+                    const response = await fetch('http://localhost:8080/job-posting', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(jobData),
+                    });
+                    if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                    await response.json();
+                    await updateActiveListingsCount();
+                    modal.style.display = 'none';
+                    newJobForm.reset();
+                    alert('New job listing created successfully!');
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                    alert(`Failed to create job listing. ${error.message}`);
+                }
+            });
+
+            // --- Event Listener to View Listings ---
+            viewListingsBtn.addEventListener('click', async () => {
+                viewListingsBtn.textContent = 'Loading...';
+                viewListingsBtn.disabled = true;
+
+                try {
+                    listingsHeader.textContent = 'Active Job Listings';
+                    const response = await fetch(`http://localhost:8080/job-posting/company/${currCompany}`);
+                    if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                    const jobs = await response.json();
+                    displayJobListings(jobs);
+                } catch (error) {
+                    console.error('Error fetching job listings:', error);
+                    listingsGrid.innerHTML = `<div class="p-6 bg-red-100 text-red-700 rounded-lg">Failed to load job listings.</div>`;
+                } finally {
+                    listingsContainer.classList.remove('hidden');
+                    await updateActiveListingsCount();
+                    viewListingsBtn.disabled = false;
+                }
+            });
+
+            // --- Event Listener to View Jobseeker Profiles ---
+            viewJobseekersBtn.addEventListener('click', async () => {
+                const originalText = viewJobseekersBtn.textContent;
+                viewJobseekersBtn.textContent = 'Loading...';
+                viewJobseekersBtn.disabled = true;
+
+                try {
+                    listingsHeader.textContent = 'Jobseeker Profiles';
+                    const response = await fetch('http://localhost:8080/jobseeker/profile/all');
+                    if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                    const profiles = await response.json();
+                    displayJobseekerProfiles(profiles);
+                } catch (error) {
+                    console.error('Error fetching jobseeker profiles:', error);
+                    listingsGrid.innerHTML = `<div class="p-6 bg-red-100 text-red-700 rounded-lg">Failed to load jobseeker profiles.</div>`;
+                } finally {
+                    listingsContainer.classList.remove('hidden');
+                    viewJobseekersBtn.textContent = originalText;
+                    viewJobseekersBtn.disabled = false;
+                }
+            });
+            
+            async function updateActiveListingsCount() {
+                const companyId = localStorage.getItem('currentCompanyId');
+                if (!companyId) {
+                    viewListingsBtn.textContent = 'View Active Listings (Error)';
+                    return;
+                }
+                try {
+                    const response = await fetch(`http://localhost:8080/job-posting/company/${companyId}/count`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        viewListingsBtn.textContent = `View Active Listings (${data.count})`;
+                    } else {
+                        viewListingsBtn.textContent = 'View Active Listings (Error)';
+                    }
+                } catch (error) {
+                    console.error("Fetch error for count:", error);
+                    viewListingsBtn.textContent = 'View Active Listings (Error)';
+                }
+            }
+            
+            function displayJobseekerProfiles(profiles) {
+                listingsGrid.innerHTML = ''; 
+
+                if (!profiles || profiles.length === 0) {
+                    listingsGrid.innerHTML = `<div class="p-6 bg-yellow-100 text-yellow-800 rounded-lg">No jobseeker profiles found.</div>`;
+                    return;
+                }
+
+                profiles.forEach(profile => {
+                    const profileCard = document.createElement('div');
+                    profileCard.className = 'p-6 bg-white rounded-lg shadow-md border border-gray-200';
+                    profileCard.innerHTML = `
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-3 mb-3">
+                            <h4 class="text-xl font-bold text-teal-800">${profile.job_title}</h4>
+                            <span class="text-sm font-medium text-gray-600 bg-gray-100 py-1 px-3 rounded-full mt-2 sm:mt-0">${profile.location}</span>
                         </div>
-                        ${upgradeLink}
+                        <p class="text-gray-600 mb-4 italic">"${profile.profile_summary}"</p>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                            <div><span class="font-semibold text-gray-800">🏢 Current Co:</span><p class="text-gray-600">${profile.current_company}</p></div>
+                            <div><span class="font-semibold text-gray-800">⏳ Experience:</span><p class="text-gray-600">${profile.work_ex} yrs (Overall: ${profile.overall_work_ex} yrs)</p></div>
+                            <div><span class="font-semibold text-gray-800">💰 Salary (LPA):</span><p class="text-gray-600">${profile.salary_range}</p></div>
+                            <div><span class="font-semibold text-gray-800">📍 Open to:</span><p class="text-gray-600">${profile.open_for_locations}</p></div>
+                            <div><span class="font-semibold text-gray-800">🛠️ Skills:</span><p class="text-gray-600">${profile.skills}</p></div>
+                            <div><span class="font-semibold text-gray-800">💼 Job Type:</span><p class="text-gray-600">${profile.job_type}</p></div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t flex space-x-2">
+                            <button id="view-resume-${profile.user_id}" data-userid="${profile.user_id}" data-profileid="${profile.id}"
+                                class="py-1 px-3 bg-green-600 text-white text-sm font-semibold rounded-md shadow-md hover:bg-green-700">
+                                📄 View Resume
+                            </button>
+                        </div>
                     `;
-                }, 1500);
-            });
+                    listingsGrid.appendChild(profileCard);
 
-             // --- Get Element References ---
-    const modal = document.getElementById('jobFormModal');
-    const createJobBtn = document.getElementById('createJobBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const newJobForm = document.getElementById('newJobForm');
-    const viewListingsBtn = document.getElementById('viewListingsBtn');
-    const listingsContainer = document.getElementById('listingsContainer');
-    const listingsGrid = document.getElementById('listingsGrid');
-    const hideListingsBtn = document.getElementById('hideListingsBtn');
+                    document.getElementById(`view-resume-${profile.user_id}`).addEventListener('click', async (event) => {
+                        const button = event.currentTarget;
+                        button.textContent = 'Loading...';
+                        button.disabled = true;
 
-    // --- Event Listeners for Modal ---
-    createJobBtn.addEventListener('click', () => {
-        const deadlineInput = document.getElementById('application_deadline');
-        const now = new Date();
-        now.setDate(now.getDate() + 30);
-        deadlineInput.value = now.toISOString().slice(0, 16);
-        modal.style.display = 'block';
-    });
+                        const userId = button.dataset.userid;
+                        const profileId = button.dataset.profileid; 
+                        const companyId = localStorage.getItem('currentCompanyId');
 
-    cancelBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-    
-    hideListingsBtn.addEventListener('click', () => {
-        listingsContainer.classList.add('hidden');
-    });
+                        if (!companyId) {
+                            alert('Company ID not found. Cannot log resume visit.');
+                            button.textContent = '📄 View Resume';
+                            button.disabled = false;
+                            return;
+                        }
 
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
+                        try {
 
-    // --- Event Listener for Form Submission ---
-    newJobForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const formData = new FormData(newJobForm);
-        const jobData = {};
-        formData.forEach((value, key) => {
-            jobData[key] = key === 'number_of_openings' ? parseInt(value, 10) : value;
-        });
-        jobData.posting_date = new Date().toISOString();
-        jobData.application_deadline = new Date(jobData.application_deadline).toISOString();
-        jobData['company_id']=localStorage.getItem('currentCompanyId')
+                            const resumeResponse = await fetch(`http://localhost:8080/resume/${userId}`);
+                            if (!resumeResponse.ok) throw new Error(`Could not fetch resume. Status: ${resumeResponse.status}`);
+                            
+                            const resumeDetails = await resumeResponse.json();
 
-        try {
-            const response = await fetch('http://localhost:8080/job-posting', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(jobData),
-            });
-            if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
-            const result = await response.json();
-            console.log('Successfully created job:', result);
-            await updateActiveListingsCount();
-            modal.style.display = 'none';
-            newJobForm.reset();
-            alert('New job listing created successfully!');
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            alert(`Failed to create job listing. ${error.message}`);
-        }
-    });
+                            if (resumeDetails.download_url) {
+                                const resumeUrl = 'http://localhost:8080' + resumeDetails.download_url;
+                                resumeModalHeader.textContent = `Viewing Resume: ${resumeDetails.filename || 'N/A'}`;
+                                resumeFrame.src = resumeUrl;
+                                resumeViewerModal.style.display = 'flex';
+                            } else {
+                                throw new Error("Download URL not found in the response.");
+                            }
 
-    // --- Event Listener to View Listings ---
-    viewListingsBtn.addEventListener('click', async () => {
-        const originalText = viewListingsBtn.textContent;
-        viewListingsBtn.textContent = 'Loading...';
-        viewListingsBtn.disabled = true;
+                            fetch('http://localhost:8080/resume-visit', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    user_id: parseInt(userId, 10),
+                                    resume_id: parseInt(resumeDetails.id, 10),
+                                    company_id: parseInt(companyId, 10)
+                                })
+                            }).catch(logError => console.error("Failed to log resume visit:", logError));
 
-        try {
-            const response = await fetch('http://localhost:8080/job-posting/company/'+currCompany);
-            if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
-            
-            const jobs = await response.json();
-            displayJobListings(jobs);
+                            
 
-        } catch (error) {
-            console.error('Error fetching job listings:', error);
-            listingsGrid.innerHTML = `<div class="p-6 bg-red-100 text-red-700 rounded-lg">Failed to load job listings. Please check the console for details.</div>`;
-        } finally {
-            listingsContainer.classList.remove('hidden');
-            viewListingsBtn.textContent = originalText;
-            viewListingsBtn.disabled = false;
-        }
-    });
-
-    async function updateActiveListingsCount() {
-    // 1. Get the company ID from local storage
-    const companyId = localStorage.getItem('currentCompanyId');
-    
-    if (!companyId) {
-        console.error("Company ID not found in local storage.");
-        viewListingsBtn.textContent = 'View Active Listings (Error)';
-        return;
-    }
-
-    try {
-        // 2. Call the API to get the count
-        const response = await fetch(`http://localhost:8080/job-posting/company/${companyId}/count`);
-
-        if (response.ok) {
-            // 3. Parse the JSON response which should be like {"count": 15}
-            const data = await response.json();
-            const count = data.count;
-
-            // 4. Update the button's text with the count from the API
-            viewListingsBtn.textContent = `View Active Listings (${count})`;
-        } else {
-            console.error("API Error:", response.status, response.statusText);
-            viewListingsBtn.textContent = 'View Active Listings (Error)';
-        }
-    } catch (error) {
-        console.error("Network or fetch error:", error);
-        viewListingsBtn.textContent = 'View Active Listings (Error)';
-    }
-}
-
-    function displayJobListings(jobs) {
-        // Clear previous results
-        listingsGrid.innerHTML = '';
-
-        if (!jobs || jobs.length === 0) {
-            listingsGrid.innerHTML = `<div class="p-6 bg-yellow-100 text-yellow-800 rounded-lg">No active listings found for this company.</div>`;
-            return;
-        }
-
-        jobs.forEach(job => {
-            const deadline = new Date(job.application_deadline).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            
-            // Create a card for each job
-            const jobCard = document.createElement('div');
-            jobCard.className = 'p-6 bg-white rounded-lg shadow-md border border-gray-200';
-            jobCard.innerHTML = `
-                <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-3 mb-3">
-                    <h4 class="text-xl font-bold text-indigo-800">${job.job_title}</h4>
-                    <span class="text-sm font-medium ${job.job_posting_status === 'OPEN' ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'} py-1 px-3 rounded-full mt-2 sm:mt-0">${job.job_posting_status}</span>
-                </div>
-                <p class="text-gray-600 mb-4">${job.job_description}</p>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                    <div>
-                        <span class="font-semibold text-gray-800">📍 Location:</span>
-                        <p class="text-gray-600">${job.job_location}</p>
-                    </div>
-                     <div>
-                        <span class="font-semibold text-gray-800">💼 Type:</span>
-                        <p class="text-gray-600">${job.job_type}</p>
-                    </div>
-                     <div>
-                        <span class="font-semibold text-gray-800">💰 Salary:</span>
-                        <p class="text-gray-600">${job.salary_range}</p>
-                    </div>
-                     <div>
-                        <span class="font-semibold text-gray-800">🎓 Experience:</span>
-                        <p class="text-gray-600">${job.required_experience}</p>
-                    </div>
-                     <div>
-                        <span class="font-semibold text-gray-800">🛠️ Skills:</span>
-                        <p class="text-gray-600">${job.skills_required}</p>
-                    </div>
-                     <div>
-                        <span class="font-semibold text-gray-800">📅 Deadline:</span>
-                        <p class="text-gray-600">${deadline}</p>
-                    </div>
-                </div>
-                <div>
-                    <button class="py-1 px-3 bg-purple-600 text-white text-sm font-semibold rounded-md shadow-md hover:bg-purple-700" id='jobpostingedit${job.id}'>
-                        Edit
-                    </button>
-                    <button class="py-1 px-3 bg-purple-600 text-white text-sm font-semibold rounded-md shadow-md hover:bg-purple-700" id='jobpostingdelete${job.id}'>
-                        Delete
-                    </button>
-                </div>
-            `;
-            listingsGrid.appendChild(jobCard);
-              // Correct Event Listener for the Edit button
-            document.getElementById(`jobpostingedit${job.id}`).addEventListener('click', () => {
-                openEditModal(job); // Pass the current job object to the function
-            });
-
-            document.getElementById(`jobpostingdelete${job.id}`).addEventListener('click', async () => {
-    // Optional: Ask the user for confirmation before deleting
-    if (!confirm('Are you sure you want to delete this job posting?')) {
-        return; // Stop the function if the user clicks 'Cancel'
-    }
-
-    try {
-        const response = await fetch('http://localhost:8080/job-posting/' + job.id, {
-            method: 'DELETE', // Specify the HTTP method for the request
-        });
-
-        // Check if the request was successful (status code 200-299)
-        if (response.ok) {
-            alert('Job posting deleted successfully!');
-            // Optional: Redirect the user or remove the element from the page
-            window.location.href = '/dashboard'; // Example redirect
-        } else {
-            // Handle server errors (e.g., status code 404, 500)
-            alert('Failed to delete job posting. The server responded with an error.');
-            console.error('Server error:', response.status, response.statusText);
-        }
-    } catch (error) {
-        // Handle network errors (e.g., user is offline)
-        alert('An error occurred. Please check your network connection and try again.');
-        console.error('Network or other error:', error);
-    }
-});
-
-});
-
-        }
-          // --- Get Element References for Edit Modal ---
-    const editModal = document.getElementById('editJobModal');
-    const editJobForm = document.getElementById('editJobForm');
-    const cancelEditBtn = document.getElementById('cancelEditBtn');
-
-    // --- Event Listener to close the Edit Modal ---
-    cancelEditBtn.addEventListener('click', () => {
-        editModal.style.display = 'none';
-    });
-
-    // Function to open and populate the edit modal
-    function openEditModal(job) {
-        // Populate the form with the job data
-        document.getElementById('edit_job_id').value = job.id;
-        document.getElementById('edit_job_title').value = job.job_title;
-        document.getElementById('edit_job_location').value = job.job_location;
-        document.getElementById('edit_job_description').value = job.job_description;
-        document.getElementById('edit_number_of_openings').value = job.number_of_openings;
-        document.getElementById('edit_job_type').value = job.job_type;
-        document.getElementById('edit_required_experience').value = job.required_experience;
-        document.getElementById('edit_salary_range').value = job.salary_range;
-        document.getElementById('edit_required_qualifications').value = job.required_qualifications;
-        document.getElementById('edit_skills_required').value = job.skills_required;
-        // Format the deadline correctly for the datetime-local input
-        document.getElementById('edit_application_deadline').value = new Date(job.application_deadline).toISOString().slice(0, 16);
-        document.getElementById('edit_job_posting_status').value = job.job_posting_status;
-
-        // Show the modal
-        editModal.style.display = 'block';
-    }
-         // --- Event Listener for Edit Form Submission ---
-    editJobForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        
-        const formData = new FormData(editJobForm);
-        const jobData = {};
-        formData.forEach((value, key) => {
-            jobData[key] = key === 'number_of_openings' ? parseInt(value, 10) : value;
-        });
-        
-        // Convert deadline to ISO string format for the API
-        jobData.application_deadline = new Date(jobData.application_deadline).toISOString();
-        const jobId = jobData.id;
-        jobData['company_id']=parseInt(localStorage.getItem('currentCompanyId'));
-
-        try {
-            const response = await fetch(`http://localhost:8080/job-posting`, {
-                method: 'PUT', // Use PUT or PATCH as per your API design
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(jobData),
-            });
-
-            if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
+                        } catch (error) {
+                            console.error('Error viewing resume:', error);
+                            alert(`Failed to load resume: ${error.message}`);
+                        } finally {
+                            button.textContent = '📄 View Resume';
+                            button.disabled = false;
+                        }
+                    });
+                });
             }
 
-            const result = await response.json();
-            console.log('Successfully updated job:', result);
-            editModal.style.display = 'none';
-            alert('Job listing updated successfully!');
+            function displayJobListings(jobs) {
+                listingsGrid.innerHTML = '';
 
-            // Refresh the listings to show the updated data
-            viewListingsBtn.click(); 
+                if (!jobs || jobs.length === 0) {
+                    listingsGrid.innerHTML = `<div class="p-6 bg-yellow-100 text-yellow-800 rounded-lg">No active listings found.</div>`;
+                    return;
+                }
 
-        } catch (error) {
-            console.error('Error updating form:', error);
-            alert(`Failed to update job listing. ${error.message}`);
+                jobs.forEach(job => {
+                    const deadline = new Date(job.application_deadline).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    const jobCard = document.createElement('div');
+                    jobCard.className = 'p-6 bg-white rounded-lg shadow-md border border-gray-200';
+                    jobCard.innerHTML = `
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-3 mb-3">
+                            <h4 class="text-xl font-bold text-indigo-800">${job.job_title}</h4>
+                            <span class="text-sm font-medium ${job.job_posting_status === 'OPEN' ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'} py-1 px-3 rounded-full mt-2 sm:mt-0">${job.job_posting_status}</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">${job.job_description}</p>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                            <div><span class="font-semibold text-gray-800">📍 Location:</span><p class="text-gray-600">${job.job_location}</p></div>
+                            <div><span class="font-semibold text-gray-800">💼 Type:</span><p class="text-gray-600">${job.job_type}</p></div>
+                            <div><span class="font-semibold text-gray-800">💰 Salary:</span><p class="text-gray-600">${job.salary_range}</p></div>
+                            <div><span class="font-semibold text-gray-800">🎓 Experience:</span><p class="text-gray-600">${job.required_experience}</p></div>
+                            <div><span class="font-semibold text-gray-800">🛠️ Skills:</span><p class="text-gray-600">${job.skills_required}</p></div>
+                            <div><span class="font-semibold text-gray-800">📅 Deadline:</span><p class="text-gray-600">${deadline}</p></div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t flex space-x-2">
+                            <button class="py-1 px-3 bg-blue-600 text-white text-sm font-semibold rounded-md shadow-md hover:bg-blue-700" id='jobpostingedit${job.id}'>Edit</button>
+                            <button class="py-1 px-3 bg-red-600 text-white text-sm font-semibold rounded-md shadow-md hover:bg-red-700" id='jobpostingdelete${job.id}'>Delete</button>
+                        </div>
+                    `;
+                    listingsGrid.appendChild(jobCard);
+                    
+                    document.getElementById(`jobpostingedit${job.id}`).addEventListener('click', () => openEditModal(job));
+                    document.getElementById(`jobpostingdelete${job.id}`).addEventListener('click', async () => {
+                        if (!confirm('Are you sure you want to delete this job posting?')) return;
+                        try {
+                            const response = await fetch(`http://localhost:8080/job-posting/${job.id}`, { method: 'DELETE' });
+                            if (response.ok) {
+                                alert('Job posting deleted successfully!');
+                                jobCard.remove(); 
+                                updateActiveListingsCount();
+                            } else {
+                                alert('Failed to delete job posting.');
+                            }
+                        } catch (error) {
+                            alert('An error occurred. Please check your network connection.');
+                        }
+                    });
+                });
+            }
+
+            function openEditModal(job) {
+                document.getElementById('edit_job_id').value = job.id;
+                document.getElementById('edit_job_title').value = job.job_title;
+                document.getElementById('edit_job_location').value = job.job_location;
+                document.getElementById('edit_job_description').value = job.job_description;
+                document.getElementById('edit_number_of_openings').value = job.number_of_openings;
+                document.getElementById('edit_job_type').value = job.job_type;
+                document.getElementById('edit_required_experience').value = job.required_experience;
+                document.getElementById('edit_salary_range').value = job.salary_range;
+                document.getElementById('edit_required_qualifications').value = job.required_qualifications;
+                document.getElementById('edit_skills_required').value = job.skills_required;
+                document.getElementById('edit_application_deadline').value = new Date(job.application_deadline).toISOString().slice(0, 16);
+                document.getElementById('edit_job_posting_status').value = job.job_posting_status;
+                editModal.style.display = 'block';
+            }
+
+            editJobForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const formData = new FormData(editJobForm);
+                const jobData = {};
+                formData.forEach((value, key) => {
+                    jobData[key] = key === 'number_of_openings' ? parseInt(value, 10) : value;
+                });
+                jobData.application_deadline = new Date(jobData.application_deadline).toISOString();
+                jobData['company_id'] = parseInt(localStorage.getItem('currentCompanyId'));
+
+                try {
+                    const response = await fetch(`http://localhost:8080/job-posting`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(jobData),
+                    });
+                    if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                    editModal.style.display = 'none';
+                    alert('Job listing updated successfully!');
+                    viewListingsBtn.click();
+                } catch (error) {
+                    console.error('Error updating form:', error);
+                    alert(`Failed to update job listing. ${error.message}`);
+                }
+            });
+
+            updateActiveListingsCount();
         }
-    });
-    updateActiveListingsCount();
-    }
-    
-    
-        
+
         window.loadAdvertiserDashboard = function() {
             const content = `
                 <div class="p-8 bg-white rounded-2xl shadow-xl border border-purple-400/50 space-y-6">

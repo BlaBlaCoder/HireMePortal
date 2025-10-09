@@ -85,14 +85,14 @@ func getResume(w http.ResponseWriter, r *http.Request) {
 	userID := parts[2]
 
 	var resume localmodel.Resume
-	query := "SELECT filename, mime_type, filepath, uploaded_at FROM user_resumes WHERE user_id = ?"
+	query := "SELECT id,filename, mime_type, filepath, uploaded_at FROM user_resumes WHERE user_id = ?"
 	db, err := dbpg.ConnectDB()
 	if err != nil {
 		log.Printf("Database connection error: %v", err)
 		http.Error(w, `{"error": "Internal database error"}`, http.StatusInternalServerError)
 		return
 	}
-	err = db.QueryRow(query, userID).Scan(&resume.Filename, &resume.MimeType, &resume.Filepath, &resume.UploadedAt)
+	err = db.QueryRow(query, userID).Scan(&resume.Id, &resume.Filename, &resume.MimeType, &resume.Filepath, &resume.UploadedAt)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

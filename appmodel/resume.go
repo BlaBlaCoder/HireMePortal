@@ -12,6 +12,7 @@ const resumeStorageDir = "./resumes"
 
 // Resume represents the metadata stored in the database
 type Resume struct {
+	Id          int    `json:"id"`
 	UserID      int    `json:"user_id"`
 	Filename    string `json:"filename"`
 	MimeType    string `json:"mime_type"`
