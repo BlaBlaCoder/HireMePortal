@@ -1479,7 +1479,7 @@
             renderProfileSection();
             updateDashboardResumeSection(currentUserId);
         }
-
+        
         window.loadCompanyDashboard = function() {
             const paidText = currentIsPaidMember ? "PREMIUM: Access to full contact details." : "FREE TIER: Contact details are masked.";
             const upgradeLink = currentIsPaidMember ? '' : `<p class="text-sm text-red-500 font-bold mt-4">Upgrade your plan to view contact details.</p>`;
@@ -1782,7 +1782,7 @@
                 }
             });
 
-            // --- Event Listener to View Jobseeker Profiles ---
+            // --- [MODIFIED] Event Listener to View Jobseeker Profiles ---
             viewJobseekersBtn.addEventListener('click', async () => {
                 const originalText = viewJobseekersBtn.textContent;
                 viewJobseekersBtn.textContent = 'Loading...';
@@ -1790,19 +1790,74 @@
 
                 try {
                     listingsHeader.textContent = 'Jobseeker Profiles';
-                    const response = await fetch('http://localhost:8080/jobseeker/profile/all');
-                    if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
-                    const profiles = await response.json();
-                    displayJobseekerProfiles(profiles);
+                    
+                    // Fetch both profiles and contact statuses at the same time
+                    const [profileResponse, statusResponse] = await Promise.all([
+                        fetch('http://localhost:8080/jobseeker/profile/all'),
+                        fetch(`http://localhost:8080/resume-visit/company/${currCompany}`)
+                    ]);
+
+                    if (!profileResponse.ok) throw new Error(`Failed to fetch profiles: ${profileResponse.status}`);
+                    if (!statusResponse.ok) throw new Error(`Failed to fetch statuses: ${statusResponse.status}`);
+                    
+                    const profiles = await profileResponse.json();
+                    const contacts = await statusResponse.json();
+
+                    // Create a map of user_id to the entire contact object for easy lookup
+                    const contactStatusMap = contacts.reduce((map, contact) => {
+                        map[contact.user_id] = contact;
+                        return map;
+                    }, {});
+
+                    displayJobseekerProfiles(profiles, contactStatusMap);
+
                 } catch (error) {
-                    console.error('Error fetching jobseeker profiles:', error);
-                    listingsGrid.innerHTML = `<div class="p-6 bg-red-100 text-red-700 rounded-lg">Failed to load jobseeker profiles.</div>`;
+                    console.error('Error fetching jobseeker data:', error);
+                    listingsGrid.innerHTML = `<div class="p-6 bg-red-100 text-red-700 rounded-lg">Failed to load jobseeker data.</div>`;
                 } finally {
                     listingsContainer.classList.remove('hidden');
                     viewJobseekersBtn.textContent = originalText;
                     viewJobseekersBtn.disabled = false;
                 }
             });
+
+            // --- [NEW & MODIFIED] Handler for status updates ---
+            async function handleStatusUpdate(event) {
+                const selectElement = event.target;
+                const userId = selectElement.dataset.userid;
+                const resumeId = selectElement.dataset.resumeid; // Get resume_id
+                const newStatus = selectElement.value;
+                const companyId = localStorage.getItem('currentCompanyId');
+
+                selectElement.disabled = true;
+
+                try {
+                    // Use the API endpoint and body structure from your curl command
+                    const response = await fetch('http://localhost:8080/resume-visit', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: parseInt(userId, 10),
+                            resume_id: parseInt(resumeId, 10),
+                            company_id: parseInt(companyId, 10),
+                            status: newStatus
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.text();
+                        throw new Error(`Failed to update status: ${errorData || response.statusText}`);
+                    }
+                    
+                    alert('Status updated successfully!');
+
+                } catch (error) {
+                    console.error('Error updating status:', error);
+                    alert(error.message);
+                } finally {
+                    selectElement.disabled = false;
+                }
+            }
             
             async function updateActiveListingsCount() {
                 const companyId = localStorage.getItem('currentCompanyId');
@@ -1824,7 +1879,8 @@
                 }
             }
             
-            function displayJobseekerProfiles(profiles) {
+            // --- [MODIFIED] Function to display profiles with status management ---
+            function displayJobseekerProfiles(profiles, contactStatusMap) {
                 listingsGrid.innerHTML = ''; 
 
                 if (!profiles || profiles.length === 0) {
@@ -1835,6 +1891,31 @@
                 profiles.forEach(profile => {
                     const profileCard = document.createElement('div');
                     profileCard.className = 'p-6 bg-white rounded-lg shadow-md border border-gray-200';
+                    
+                    const currentContact = contactStatusMap[profile.user_id];
+                    // Use the exact status list you provided
+                    const statusOptions = ['RESUME_CHECKED', 'CONTACTED', 'PENDING', 'REJECTED', 'SELECTED'];
+                    let statusManagementHTML = '';
+
+                    // Only show the status dropdown if a contact record exists
+                    if (currentContact) {
+                        statusManagementHTML = `
+                            <div class="mt-4 pt-4 border-t">
+                                <label for="status-select-${profile.user_id}" class="block text-sm font-medium text-gray-700 mb-1">Candidate Status:</label>
+                                <select id="status-select-${profile.user_id}" 
+                                        data-userid="${profile.user_id}" 
+                                        data-resumeid="${currentContact.resume_id}" 
+                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
+                                    ${statusOptions.map(option => 
+                                        `<option value="${option}" ${option === currentContact.status ? 'selected' : ''}>
+                                            ${option.replace(/_/g, ' ')}
+                                        </option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                        `;
+                    }
+                    
                     profileCard.innerHTML = `
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-3 mb-3">
                             <h4 class="text-xl font-bold text-teal-800">${profile.job_title}</h4>
@@ -1855,8 +1936,14 @@
                                 📄 View Resume
                             </button>
                         </div>
+                        ${statusManagementHTML}
                     `;
                     listingsGrid.appendChild(profileCard);
+                    
+                    // Add event listener for status change if the dropdown exists
+                    if (currentContact) {
+                        document.getElementById(`status-select-${profile.user_id}`).addEventListener('change', handleStatusUpdate);
+                    }
 
                     document.getElementById(`view-resume-${profile.user_id}`).addEventListener('click', async (event) => {
                         const button = event.currentTarget;
@@ -1864,7 +1951,6 @@
                         button.disabled = true;
 
                         const userId = button.dataset.userid;
-                        const profileId = button.dataset.profileid; 
                         const companyId = localStorage.getItem('currentCompanyId');
 
                         if (!companyId) {
@@ -1898,10 +1984,13 @@
                                     resume_id: parseInt(resumeDetails.id, 10),
                                     company_id: parseInt(companyId, 10)
                                 })
+                            }).then(res => {
+                                if (res.ok) {
+                                    // Automatically refresh the profiles list to show the new status dropdown
+                                    viewJobseekersBtn.click();
+                                }
                             }).catch(logError => console.error("Failed to log resume visit:", logError));
-
                             
-
                         } catch (error) {
                             console.error('Error viewing resume:', error);
                             alert(`Failed to load resume: ${error.message}`);
@@ -2009,7 +2098,6 @@
 
             updateActiveListingsCount();
         }
-
         window.loadAdvertiserDashboard = function() {
             const content = `
                 <div class="p-8 bg-white rounded-2xl shadow-xl border border-purple-400/50 space-y-6">
