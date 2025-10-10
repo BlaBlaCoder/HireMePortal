@@ -197,6 +197,8 @@ func InitializeAPI() {
 	http.HandleFunc("/resume-visit/", HandleResumeContactsRequests)
 	http.HandleFunc("/job-posting", HandleJobDescriptionRequests)
 	http.HandleFunc("/job-posting/", HandleJobDescriptionRequests)
+	http.HandleFunc("/job-visits", HandleJobVisitsRequests)
+	http.HandleFunc("/job-visits/", HandleJobVisitsRequests)
 	http.HandleFunc("/index.html", templateHandler)
 	http.HandleFunc("/", templateHandler)
 	http.HandleFunc("/testing", TestingHandler)

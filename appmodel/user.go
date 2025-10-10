@@ -94,6 +94,7 @@ type JobPosting struct {
 type JobContactMade struct {
 	ID              int       `json:"id,omitempty"`
 	JobID           StringInt `json:"job_id"`
+	CompanyID       StringInt `json:"company_id"`
 	UserID          StringInt `json:"user_id"`
 	ContactDate     time.Time `json:"contact_date"`
 	ContactedStatus string    `json:"contacted_status"` // ENUM: 'CONTACTED', 'PENDING', 'REJECTED', 'SELECTED'
