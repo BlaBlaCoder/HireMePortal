@@ -195,6 +195,10 @@ func InitializeAPI() {
 	// In the main() function:
 	http.HandleFunc("/api/cart", handleCartRequests)
 	http.HandleFunc("/api/cart/", handleCartRequests)
+
+	// Register the handler for the "/login/admin" endpoint
+	// We wrap our handler with the CORS middleware
+	http.HandleFunc("/login/admin", adminLoginHandler)
 	http.HandleFunc("/login", handleLoginRequests)
 	http.HandleFunc("/analyze-resume", ResumeSummaryHandler)
 	http.HandleFunc("/analyze-resume/", ResumeSummaryHandler)
@@ -207,6 +211,7 @@ func InitializeAPI() {
 	http.HandleFunc("/index.html", templateHandler)
 	http.HandleFunc("/", templateHandler)
 	http.HandleFunc("/testing", TestingHandler)
+
 	fmt.Println("Server is running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

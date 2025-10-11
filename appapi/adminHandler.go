@@ -10,6 +10,7 @@ import (
 
 // adminHandler handles the login form display and submission.
 func AdminHandler(w http.ResponseWriter, r *http.Request) {
+	log.Print("admin")
 	if r.Method == http.MethodGet {
 		tmpl, _ := template.ParseFiles("templates/admin.html")
 		tmpl.Execute(w, nil)
@@ -67,7 +68,7 @@ func showDashboard(w http.ResponseWriter, r *http.Request) {
 	data := localmodel.PageData{
 		Users: users,
 	}
-
+	log.Print("admindashboar")
 	tmpl, _ := template.ParseFiles("templates/admindashboard.html")
 	tmpl.Execute(w, data)
 }
