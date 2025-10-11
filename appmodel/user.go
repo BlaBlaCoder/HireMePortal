@@ -97,7 +97,7 @@ type JobContactMade struct {
 	CompanyID       StringInt `json:"company_id"`
 	UserID          StringInt `json:"user_id"`
 	ContactDate     time.Time `json:"contact_date"`
-	ContactedStatus string    `json:"contacted_status"` // ENUM: 'CONTACTED', 'PENDING', 'REJECTED', 'SELECTED'
+	ContactedStatus string    `json:"contacted_status"` // ENUM: 'APPLIED', 'PENDING', 'REJECTED', 'SELECTED'
 }
 
 type ResumeContactMade struct {

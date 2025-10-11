@@ -33,7 +33,6 @@ func HandleJobSeekerProfileRequests(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
-
 	var profiles []localmodel.JobSeekerProfile
 	db, err := dbpg.ConnectDB()
 	if err != nil {
@@ -133,14 +132,6 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 		&userProfileID)
 
 	if err == sql.ErrNoRows {
-		http.Error(w, "Profile not found", http.StatusNotFound)
-		return
-	}
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if userProfileID < 1 {
 		log.Print(profile)
 
 		// Remove RETURNING id for MySQL, use Exec and LastInsertId

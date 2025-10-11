@@ -90,7 +90,7 @@ func handleSignup(w http.ResponseWriter, r *http.Request) {
 	}
 	response := map[string]interface{}{
 		"message":   "User created successfully!",
-		"user_id":   userID,
+		"user_id":   insertedId,
 		"user_name": companyPayload.UserName,
 	}
 	if companyPayload.UserType == "RECRUITER" || companyPayload.UserType == "ADVERTISER" {
@@ -110,6 +110,11 @@ func handleSignup(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println("Company details inserted successfully")
 		compId, err := comRes.LastInsertId()
+		if err != nil {
+			log.Printf("Failed to retrieve last insert ID: %v", err)
+			http.Error(w, `{"error": "Failed to create company"}`, http.StatusInternalServerError)
+			return
+		}
 		response["company_id"] = compId
 	}
 

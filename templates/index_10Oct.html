@@ -226,8 +226,8 @@
         <header class="flex justify-between items-center mb-6 p-4 bg-white rounded-2xl shadow-xl">
               <h1 class="text-4xl font-extrabold text-indigo-700 tracking-tight">HireMe Career Portal</h1>
               <button id="logoutBtn" onclick="logoutUser()" class="py-2 px-5 bg-red-600 text-white text-sm font-semibold rounded-full shadow-lg hover:bg-red-700 transition duration-300 hidden">
-                  Logout
-              </button>
+                Logout
+            </button>
         </header>
 
         <div id="messageBox" class="p-4 bg-gray-100 rounded-lg text-center text-sm font-medium text-gray-600 shadow-inner">
@@ -357,22 +357,22 @@
 // Global Message Function
         function showMessage(text, type = 'info') {
              // Set a timeout to hide the message after 4 seconds
-             messageTimeout = setTimeout(() => {
-                 messageBox.textContent = ''; // Clear text
-                 // Reset to default neutral state
-                 messageBox.className = 'p-4 bg-gray-100 rounded-lg text-center text-sm font-medium text-gray-600 shadow-inner';
-             }, 4000); // 4 seconds
-             // Clear any existing timeout
-             clearTimeout(messageTimeout);
+            messageTimeout = setTimeout(() => {
+                messageBox.textContent = ''; // Clear text
+                // Reset to default neutral state
+                messageBox.className = 'p-4 bg-gray-100 rounded-lg text-center text-sm font-medium text-gray-600 shadow-inner';
+            }, 4); // 4 seconds
+            // Clear any existing timeout
+            clearTimeout(messageTimeout);
 
-             messageBox.textContent = text;
-             messageBox.className = 'p-4 rounded-lg text-center text-sm font-medium shadow-inner'; // Reset classes
-             
-             if (type === 'success') messageBox.classList.add('bg-green-100', 'text-green-800');
-             else if (type === 'error') messageBox.classList.add('bg-red-100', 'text-red-800');
-             else messageBox.classList.add('bg-blue-100', 'text-blue-800');
-
+            messageBox.textContent = text;
+            messageBox.className = 'p-4 rounded-lg text-center text-sm font-medium shadow-inner'; // Reset classes
             
+            if (type === 'success') messageBox.classList.add('bg-green-100', 'text-green-800');
+            else if (type === 'error') messageBox.classList.add('bg-red-100', 'text-red-800');
+            else messageBox.classList.add('bg-blue-100', 'text-blue-800');
+
+           
         };
         
         // --- CORE AUTH AND STATE MANAGEMENT ---
@@ -430,12 +430,13 @@
                 dashboardScreen.classList.add('hidden');
                 logoutBtn.classList.add('hidden');
                  // FIX: Ensure login is visible and signup is hidden when starting logged out
-                 if (loginContainer && signupContainer) {
-                     loginContainer.classList.remove('hidden');
-                     signupContainer.classList.add('hidden');
-                     // Ensure the button text reflects the state
-                     document.getElementById('toggleSignupBtn').textContent = 'Show Signup Form';
-                 }
+                if (loginContainer && signupContainer) {
+                    loginContainer.classList.remove('hidden');
+                    signupContainer.classList.add('hidden');
+                    // Ensure the button text reflects the state
+                    document.getElementById('toggleSignupBtn').textContent = 'Show Signup Form';
+                }
+                
                 showMessage('Please sign up or log in to continue.', 'info');
             }
         }
@@ -473,7 +474,6 @@
              // Reset profile state on logout
             jobSeekerProfile = null;
             isProfileComplete = false;
-            
             checkAuth();
         }
 
@@ -851,7 +851,7 @@
                                     <span class="value">${jobSeekerProfile.job_title || 'N/A'}</span>
                                 </div>
                                 <div>
-                                 </div>  
+                                 </div>   
                                 <div>
                                 <div class="profile-field">
                                     <span class="label">Open For Locations</span>
@@ -1019,47 +1019,30 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
                          <div class="p-6 bg-yellow-50 rounded-xl border border-yellow-300 shadow-md">
-                             <h3 class="text-xl font-bold text-yellow-700 mb-3 flex items-center">Resume Status</h3>
-                             <div id="resumeStatusContent" class="text-sm text-gray-600 space-y-2">
-                                 <p>Status: <span id="currentResumeStatus" class="font-bold text-red-600">Not Uploaded</span></p>
-                                 <p>File: <span id="currentFilenameSummary">N/A</span></p>
-                                 <p>Last Update: <span id="currentUploadTimeSummary">N/A</span></p>
-                             </div>
-                         </div>
-
-                         <div class="p-6 bg-white rounded-xl border border-gray-200 shadow-md">
-                             <h3 class="text-xl font-bold text-gray-700 mb-3 flex items-center">Total Profile Views</h3>
-                             <p class="text-5xl font-extrabold text-green-600">
-                                 <span id="companyViewProfileCount">0</span>
-                             </p>
-
-                             <ul id="companyVisitList" class="text-sm text-gray-600 mt-4 space-y-2">
-                                 </ul>
-                         </div>
-                         <div class="p-6 bg-white rounded-xl border border-gray-200 shadow-md">
-                             <h3 class="text-xl font-bold text-gray-700 mb-3 flex items-center">Applications Sent</h3>
-                             <p class="text-5xl font-extrabold text-blue-600"><span id="companyAppliedCount">0</span></p>
-                             <ul id="applicationStatusList" class="text-sm text-gray-600 mt-4 space-y-1"></ul>
-                         </div>
-                         <div class="lg:col-span-3 p-6 bg-white rounded-xl border border-gray-200 shadow-md">
-                             <h3 class="text-xl font-bold text-gray-700 mb-3">Job Opportunities</h3>
-                             <button id="viewAllJobsBtn" class="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700">
-                                 View & Apply for Jobs
-                             </button>
-                         </div>
-                    </div>
-                    
-                    <div id="jobListingsForSeekerContainer" class="lg:col-span-3 hidden space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-2xl font-bold text-gray-800">Available Jobs</h3>
-                            <button id="hideJobsBtn" class="py-2 px-4 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600">
-                                Hide
-                            </button>
-                        </div>
-                        <div id="jobListingsForSeekerGrid" class="space-y-4 max-h-[65vh] overflow-y-auto pr-2">
+                            <h3 class="text-xl font-bold text-yellow-700 mb-3 flex items-center">Resume Status</h3>
+                            <div id="resumeStatusContent" class="text-sm text-gray-600 space-y-2">
+                                <p>Status: <span id="currentResumeStatus" class="font-bold text-red-600">Not Uploaded</span></p>
+                                <p>File: <span id="currentFilenameSummary">N/A</span></p>
+                                <p>Last Update: <span id="currentUploadTimeSummary">N/A</span></p>
                             </div>
-                    </div>
+                        </div>
 
+                        <div class="p-6 bg-white rounded-xl border border-gray-200 shadow-md">
+                            <h3 class="text-xl font-bold text-gray-700 mb-3 flex items-center">Total Profile Views</h3>
+                            <p class="text-5xl font-extrabold text-green-600">
+                                <span id="companyViewProfileCount">0</span>
+                            </p>
+
+                            <ul id="companyVisitList" class="text-sm text-gray-600 mt-4 space-y-2">
+                                </ul>
+                        </div>
+                        <div class="p-6 bg-white rounded-xl border border-gray-200 shadow-md">
+                            <h3 class="text-xl font-bold text-gray-700 mb-3 flex items-center">Applications Sent</h3>
+                            <p class="text-5xl font-extrabold text-blue-600"><span id="companyAppliedCount">5</span></p>
+                            <p class="text-sm text-gray-500 mt-2">Jobs you applied to this month (Simulated).</p>
+                        </div>
+                    </div>
+                   
                     <div id="aiAnalyzerSection" class="lg:col-span-3 p-6 bg-gray-900 rounded-2xl shadow-xl border border-indigo-400/50 space-y-4">
                          <h3 class="text-2xl font-bold text-white border-b border-gray-700 pb-3 text-center">AI Resume Analysis</h3>
                         <div class="text-center">
@@ -1069,6 +1052,7 @@
                             </button>
                         </div>
 
+                        <!-- Loading Spinner -->
                         <div id="loader" class="hidden flex justify-center items-center my-8">
                             <svg class="animate-spin h-10 w-10 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -1076,12 +1060,15 @@
                             </svg>
                         </div>
 
+                        <!-- Error Message -->
                         <div id="error-container" class="hidden bg-red-900 border border-red-600 text-red-200 px-4 py-3 rounded-lg relative my-4" role="alert">
                             <strong class="font-bold">Error:</strong>
                             <span class="block sm:inline" id="error-message"></span>
                         </div>
                         
+                        <!-- Results Container -->
                         <div id="results" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                            <!-- Overall Rating -->
                             <div class="md:col-span-1 bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center">
                                 <h2 class="text-xl font-semibold text-white mb-4">Overall Match</h2>
                                 <div class="relative w-40 h-40">
@@ -1099,7 +1086,9 @@
                                 <p id="rating-label" class="mt-4 text-lg font-medium text-gray-300"></p>
                             </div>
 
+                            <!-- Skills & Contact -->
                             <div class="md:col-span-2 bg-gray-800 p-6 rounded-2xl shadow-lg text-gray-200">
+                                <!-- Contact Info -->
                                 <div class="mb-6">
                                     <h2 class="text-xl font-semibold text-white mb-3">Contact Information</h2>
                                     <div class="flex items-center text-gray-300 mb-2">
@@ -1112,6 +1101,7 @@
                                     </div>
                                 </div>
                                 
+                                <!-- Skills Breakdown -->
                                 <div>
                                     <h2 class="text-xl font-semibold text-white mb-3">Skills Breakdown</h2>
                                     <div class="overflow-x-auto">
@@ -1124,7 +1114,8 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="skills-table-body">
-                                                </tbody>
+                                                <!-- JS will populate this -->
+                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -1149,6 +1140,7 @@
                     <div id="profileUpdateFormContainer" class="hidden">
                         <form id="jobSeekerProfileForm" class="space-y-4 p-5 border border-blue-200 rounded-xl bg-blue-50 shadow-inner">
                             <h4 class="text-xl font-semibold text-gray-700">Update Your Details</h4>
+                            <!-- UserId (readonly, hidden for user, but included for backend) -->
                             <input type="hidden" id="profileUserId" name="user_id" value="">
                              <div>
                                 <label for="profileSummary" class="block text-sm font-medium text-gray-700">Professional Headline</label>
@@ -1263,36 +1255,28 @@
             let locations = [];
             let skills = [];
             
-            // NEW: Add elements for job listings
-            const viewAllJobsBtn = document.getElementById('viewAllJobsBtn');
-            const jobListingsForSeekerContainer = document.getElementById('jobListingsForSeekerContainer');
-            const jobListingsForSeekerGrid = document.getElementById('jobListingsForSeekerGrid');
-            const hideJobsBtn = document.getElementById('hideJobsBtn');
-            const companyAppliedCountEl = document.getElementById('companyAppliedCount');
-            const applicationStatusList = document.getElementById('applicationStatusList');
-
-            hideJobsBtn.addEventListener('click', () => jobListingsForSeekerContainer.classList.add('hidden'));
-
-            async function showcCmpanyViewProfileCountEl(){
-              try {
-                const response =  await fetch(`${API_URL}/jobseeker/profile/${currentUserId}`);
-                if (!response.ok) {
-                        throw new Error(`Server responded with status: ${response.status}. Please ensure the Go API is running.`);
-                }
-                const data = await response.json();
-               companyViewProfileCountEl.textContent = data;
-             }  catch (error) {
-                    console.error("Fetch error:", error);
-                    displayError(error.message);
-                }
-            }
-
-            async function initializeProfileVisit() {
+            // function showcCmpanyViewProfileCountEl(){
+            //   try {
+            //     const response = fetch(API_URL+'/jobseeker/profile/'+{currentUserId});
+            //     if (!response.ok) {
+            //             throw new Error(`Server responded with status: ${response.status}. Please ensure the Go API is running.`);
+            //     }
+            //     const data = response.json();
+            //    companyViewProfileCountEl.textContent = data;
+            //  }  catch (error) {
+            //         console.error("Fetch error:", error);
+            //         displayError(error.message);
+            //     }
+            // }
+                function initializeProfileVisit() {
+                
                 // The API endpoint to fetch data from
                 const apiUrl = 'http://localhost:8080/resume-visit/' + currentUserId;
+
                 // Get references to the HTML elements we need to update
                 const countElement = document.getElementById('companyViewProfileCount');
                 const listElement = document.getElementById('companyVisitList');
+
                 // Use the Fetch API to get the data
                 fetch(apiUrl)
                     .then(response => {
@@ -1305,18 +1289,23 @@
                     .then(data => {
                         // Update the total view count with the number of items in the array
                         countElement.textContent = data.length;
+
                         // Clear any placeholder content in the list
                         listElement.innerHTML = '';
+
                         // Loop through each visit in the data array
                         data.forEach(visit => {
                             // Create a new list item element
                             const listItem = document.createElement('li');
-                           // Format the date for better readability
+                            
+                            // Format the date for better readability
                             const contactDate = new Date(visit.contact_date);
                             const options = { year: 'numeric', month: 'short', day: 'numeric' };
                             const formattedDate = contactDate.toLocaleDateString('en-US', options);
+
                             // Set the text content for the list item
                             listItem.textContent = `${visit.company_name} viewed your profile on ${formattedDate}.`;
+                            
                             // Add the new list item to the list in the HTML
                             listElement.appendChild(listItem);
                         });
@@ -1326,376 +1315,169 @@
                         console.error('Error fetching resume visits:', error);
                         listElement.innerHTML = '<li class="text-red-500">Could not load visit data.</li>';
                     });
-
                 }
-            await showcCmpanyViewProfileCountEl();
-            await initializeProfileVisit();
-            viewAllJobsBtn.addEventListener('click', async () => {
-                viewAllJobsBtn.textContent = 'Loading Jobs...';
-                viewAllJobsBtn.disabled = true;
-
-                try {
-                    const [jobsResponse, appliedResponse] = await Promise.all([
-                        fetch(`${API_URL}/job-posting`),
-                        fetch(`${API_URL}/job-visits/user/${currentUserId}`)
-                    ]);
-
-                    if (!jobsResponse.ok) throw new Error('Could not fetch job listings.');
+            function initializeSkillTags() {
+                const initialValues = skillhiddenInput.value.trim();
+                if (initialValues) {
+                    const initialskills = initialValues.split(',')
+                        .map(loc => loc.trim())
+                        .filter(loc => loc !== '');
                     
-                    let allJobs = await jobsResponse.json();
-                    let appliedJobs = [];
-                    if (appliedResponse.ok) {
-                        appliedJobs = await appliedResponse.json();
+                    initialskills.forEach(skill => {
+                        skills.push(skill);
+                        createSkillTag(skill);
+                    });
+                }
+            }
+            function updateHiddenskillInput() {
+                updateHiddenskillInput.value = skills.join(',');
+            }
+
+            function createSkillTag(label) {
+                const tag = document.createElement('div');
+                tag.classList.add('tag');
+                tag.innerHTML = `
+                    <span>${label}</span>
+                    <span class="tag-remove" data-label="${label}">&times;</span>
+                `;
+                skilltagContainer.insertBefore(tag, skilltextInput);
+            }
+            
+            skilltextInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    const newskill = skilltextInput.value.trim();
+                    if (newskill && !skills.includes(newskill)) {
+                        skills.push(newskill);
+                        createSkillTag(newskill);
+                        updateHiddenskillInput();
                     }
-                    const appliedJobMap = appliedJobs.reduce((map, job) => {
-                        map.set(job.job_id, job.contacted_status);
-                        return map;
-                    }, new Map());
-                    displayJobsForSeeker(allJobs, appliedJobMap);
-                    jobListingsForSeekerContainer.classList.remove('hidden');
-                    
-                    
-
-                } catch (error) {
-                    showMessage(error.message, 'error');
-                } finally {
-                    viewAllJobsBtn.textContent = 'View & Apply for Jobs';
-                    viewAllJobsBtn.disabled = false;
+                    skilltextInput.value = '';
                 }
             });
 
-            async function handleApplyForJob(jobId, companyId, buttonElement) {
-                buttonElement.disabled = true;
-                buttonElement.textContent = 'Applying...';
+            skilltagContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-remove')) {
+                    const labelToRemove = e.target.dataset.label;
+                    skills = skills.filter(loc => loc !== labelToRemove);
+                    e.target.parentElement.remove();
+                    updateHiddenskillInput();
+                } else if (e.target === skilltagContainer) {
+                    skilltextInput.focus();
+                }
+            });
 
+            initializeSkillTags();
+        
+            initializeProfileVisit();
+            // showcCmpanyViewProfileCountEl()
+           function initializeTags() {
+                const initialValues = hiddenInput.value.trim();
+                if (initialValues) {
+                    const initialLocations = initialValues.split(',')
+                        .map(loc => loc.trim())
+                        .filter(loc => loc !== '');
+                    
+                    initialLocations.forEach(location => {
+                        locations.push(location);
+                        createTag(location);
+                    });
+                }
+            }
+
+            
+            function updateHiddenInput() {
+                hiddenInput.value = locations.join(',');
+            }
+
+            function createTag(label) {
+                const tag = document.createElement('div');
+                tag.classList.add('tag');
+                tag.innerHTML = `
+                    <span>${label}</span>
+                    <span class="tag-remove" data-label="${label}">&times;</span>
+                `;
+                tagContainer.insertBefore(tag, textInput);
+            }
+            
+            textInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    const newLocation = textInput.value.trim();
+                    if (newLocation && !locations.includes(newLocation)) {
+                        locations.push(newLocation);
+                        createTag(newLocation);
+                        updateHiddenInput();
+                    }
+                    textInput.value = '';
+                }
+            });
+
+            tagContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-remove')) {
+                    const labelToRemove = e.target.dataset.label;
+                    locations = locations.filter(loc => loc !== labelToRemove);
+                    e.target.parentElement.remove();
+                    updateHiddenInput();
+                } else if (e.target === tagContainer) {
+                    textInput.focus();
+                }
+            });
+
+            initializeTags();
+
+            analyzeBtn.addEventListener('click', async () => {
+                // Reset UI
+                loader.classList.remove('hidden');
+                resultsContainer.classList.add('hidden');
+                errorContainer.classList.add('hidden');
+                
                 try {
-                    const response = await fetch(`${API_URL}/job-visits`, {
+                    // This should point to your local Go server's endpoint for analysis, not the resume retrieval
+                    const response = await fetch('http://localhost:8080/analyze-resume', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            user_id: currentUserId,
-                            job_id: jobId,
-                            company_id: companyId
-                        })
+                        body: JSON.stringify({ user_id: currentUserId })
                     });
 
                     if (!response.ok) {
-                        const errData = await response.json();
-                        throw new Error(errData.message || 'Application failed.');
+                        throw new Error(`Server responded with status: ${response.status}. Please ensure the Go API is running.`);
                     }
 
-                    showMessage('Successfully applied for the job!', 'success');
-                    buttonElement.textContent = 'Applied';
-                    buttonElement.classList.remove('bg-green-600', 'hover:bg-green-700');
-                    buttonElement.classList.add('bg-gray-400', 'cursor-not-allowed');
+                    const data = await response.json();
                     
-                    // Refresh the applied jobs list
-                    updateAppliedJobsStatus();
+                    // Populate UI with data
+                    displayOverallRating(data.overallRating,overallScoreEl, ratingLabelEl, progressCircle);
+                    displayContactInfo(data.contactInfo, contactEmailEl, contactPhoneEl);
+                    displaySkills(data.skills, skillsTableBody);
+
+                    // Show results
+                    resultsContainer.classList.remove('hidden');
 
                 } catch (error) {
-                    showMessage(error.message, 'error');
-                    buttonElement.disabled = false;
-                    buttonElement.textContent = 'Apply Now';
+                    console.error("Fetch error:", error);
+                    displayError(error.message);
+                } finally {
+                    loader.classList.add('hidden');
                 }
-            }
-
-            function displayJobsForSeeker(jobs, appliedJobMap) {
-                jobListingsForSeekerGrid.innerHTML = '';
-                if (!jobs || jobs.length === 0) {
-                    jobListingsForSeekerGrid.innerHTML = `<p class="text-center text-gray-500">No open jobs at the moment. Check back later!</p>`;
-                    return;
-                }
-
-                jobs.forEach(job => {
-                    let isApplied=false;
-                    let status;
-                    if(appliedJobMap.size!=0){
-                        isApplied = appliedJobMap.has(job.id);
-                        status = appliedJobMap.get(job.id);
-                    }
-                    const deadline = new Date(job.application_deadline).toLocaleDateString();
-
-                    const card = document.createElement('div');
-                    card.className = 'p-5 bg-white rounded-lg shadow-md border';
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="text-lg font-bold text-indigo-700">${job.job_title}</h4>
-                                <p class="text-sm text-gray-500">${job.job_location}</p>
-                            </div>
-                            <button 
-                                id="apply-btn-${job.id}"
-                                class="py-2 px-4 text-sm font-semibold rounded-lg shadow-md transition duration-150 ${isApplied ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-green-600 text-white hover:bg-green-700'}"
-                                ${isApplied ? 'disabled' : ''}
-                            >
-                                ${isApplied ? status : 'Apply Now'}
-                            </button>
-                        </div>
-                        <p class="text-gray-700 my-3 text-sm">${job.job_description}</p>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-600">
-                            <p><strong>Salary:</strong> ${job.salary_range}</p>
-                            <p><strong>Experience:</strong> ${job.required_experience}</p>
-                            <p><strong>Type:</strong> ${job.job_type}</p>
-                            <p><strong>Deadline:</strong> ${deadline}</p>
-                        </div>
-                        <div class="mt-3">
-                            <p class="text-xs"><strong>Skills:</strong> ${job.skills_required}</p>
-                        </div>
-                    `;
-                    jobListingsForSeekerGrid.appendChild(card);
-
-                    if (!isApplied) {
-                        document.getElementById(`apply-btn-${job.id}`).addEventListener('click', (e) => {
-                            handleApplyForJob(job.id, job.company_id, e.target);
-                        });
-                    }
-                });
-            }
-
-            async function updateAppliedJobsStatus() {
-                try {
-                    const response = await fetch(`${API_URL}/job-visits/user/${currentUserId}`);
-                    if (!response.ok) {
-                        companyAppliedCountEl.textContent = 'N/A';
-                        applicationStatusList.innerHTML = '<li>Could not load application data.</li>';
-                        return;
-                    }
-                    let appliedJobs=[];
-                    try{
-                    appliedJobs = await response.json();
-                    
-                    companyAppliedCountEl.textContent = appliedJobs.length;
-                    applicationStatusList.innerHTML = ''; // Clear existing
-                    }catch(error){
-                        console.error("No jobs applied:", error);
-                    }
-
-                    if (appliedJobs.length === 0) {
-                        applicationStatusList.innerHTML = '<li>You have not applied to any jobs yet.</li>';
-                    } else {
-                        appliedJobs.forEach(app => {
-                            const li = document.createElement('li');
-                            li.className = 'text-sm text-gray-600';
-                            li.innerHTML = `Applied for <strong>${app.job_title}</strong> - Status: <span class="font-bold">${app.contacted_status.replace(/_/g, ' ')}</span>`;
-                            applicationStatusList.appendChild(li);
-                        });
-                    }
-                } catch (error) {
-                    console.error("Error fetching applied jobs:", error);
-                    companyAppliedCountEl.textContent="0";
-                }
-            }
+            });
             
-                     function initializeProfileVisit() {
-                         
-                         // The API endpoint to fetch data from
-                         const apiUrl = 'http://localhost:8080/resume-visit/' + currentUserId;
-
-                         // Get references to the HTML elements we need to update
-                         const countElement = document.getElementById('companyViewProfileCount');
-                         const listElement = document.getElementById('companyVisitList');
-
-                         // Use the Fetch API to get the data
-                         fetch(apiUrl)
-                             .then(response => {
-                                 // Check if the request was successful
-                                 if (!response.ok) {
-                                     throw new Error('Network response was not ok');
-                                 }
-                                 return response.json(); // Parse the JSON from the response
-                             })
-                             .then(data => {
-                                 // Update the total view count with the number of items in the array
-                                 countElement.textContent = data.length;
-
-                                 // Clear any placeholder content in the list
-                                 listElement.innerHTML = '';
-
-                                 // Loop through each visit in the data array
-                                 data.forEach(visit => {
-                                     // Create a new list item element
-                                     const listItem = document.createElement('li');
-                                     
-                                     // Format the date for better readability
-                                     const contactDate = new Date(visit.contact_date);
-                                     const options = { year: 'numeric', month: 'short', day: 'numeric' };
-                                     const formattedDate = contactDate.toLocaleDateString('en-US', options);
-
-                                     // Set the text content for the list item
-                                     listItem.textContent = `${visit.company_name} viewed your profile on ${formattedDate}.`;
-                                     
-                                     // Add the new list item to the list in the HTML
-                                     listElement.appendChild(listItem);
-                                 });
-                             })
-                             .catch(error => {
-                                 // If an error occurs, log it to the console and update the card
-                                 console.error('Error fetching resume visits:', error);
-                                 listElement.innerHTML = '<li class="text-red-500">Could not load visit data.</li>';
-                             });
-                         }
-                    function initializeSkillTags() {
-                        const initialValues = skillhiddenInput.value.trim();
-                        if (initialValues) {
-                            const initialskills = initialValues.split(',')
-                                .map(loc => loc.trim())
-                                .filter(loc => loc !== '');
-                            
-                            initialskills.forEach(skill => {
-                                skills.push(skill);
-                                createSkillTag(skill);
-                            });
-                        }
-                    }
-                    function updateHiddenskillInput() {
-                        updateHiddenskillInput.value = skills.join(',');
-                    }
-
-                    function createSkillTag(label) {
-                        const tag = document.createElement('div');
-                        tag.classList.add('tag');
-                        tag.innerHTML = `
-                            <span>${label}</span>
-                            <span class="tag-remove" data-label="${label}">&times;</span>
-                        `;
-                        skilltagContainer.insertBefore(tag, skilltextInput);
-                    }
-                    
-                    skilltextInput.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter' || e.key === ',') {
-                            e.preventDefault();
-                            const newskill = skilltextInput.value.trim();
-                            if (newskill && !skills.includes(newskill)) {
-                                skills.push(newskill);
-                                createSkillTag(newskill);
-                                updateHiddenskillInput();
-                            }
-                            skilltextInput.value = '';
-                        }
-                    });
-
-                    skilltagContainer.addEventListener('click', (e) => {
-                        if (e.target.classList.contains('tag-remove')) {
-                            const labelToRemove = e.target.dataset.label;
-                            skills = skills.filter(loc => loc !== labelToRemove);
-                            e.target.parentElement.remove();
-                            updateHiddenskillInput();
-                        } else if (e.target === skilltagContainer) {
-                            skilltextInput.focus();
-                        }
-                    });
-
-                    initializeSkillTags();
-            
-                    initializeProfileVisit();
-                   function initializeTags() {
-                        const initialValues = hiddenInput.value.trim();
-                        if (initialValues) {
-                            const initialLocations = initialValues.split(',')
-                                .map(loc => loc.trim())
-                                .filter(loc => loc !== '');
-                            
-                            initialLocations.forEach(location => {
-                                locations.push(location);
-                                createTag(location);
-                            });
-                        }
-                    }
-
-                    
-                    function updateHiddenInput() {
-                        hiddenInput.value = locations.join(',');
-                    }
-
-                    function createTag(label) {
-                        const tag = document.createElement('div');
-                        tag.classList.add('tag');
-                        tag.innerHTML = `
-                            <span>${label}</span>
-                            <span class="tag-remove" data-label="${label}">&times;</span>
-                        `;
-                        tagContainer.insertBefore(tag, textInput);
-                    }
-                    
-                    textInput.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter' || e.key === ',') {
-                            e.preventDefault();
-                            const newLocation = textInput.value.trim();
-                            if (newLocation && !locations.includes(newLocation)) {
-                                locations.push(newLocation);
-                                createTag(newLocation);
-                                updateHiddenInput();
-                            }
-                            textInput.value = '';
-                        }
-                    });
-
-                    tagContainer.addEventListener('click', (e) => {
-                        if (e.target.classList.contains('tag-remove')) {
-                            const labelToRemove = e.target.dataset.label;
-                            locations = locations.filter(loc => loc !== labelToRemove);
-                            e.target.parentElement.remove();
-                            updateHiddenInput();
-                        } else if (e.target === tagContainer) {
-                            textInput.focus();
-                        }
-                    });
-
-                    initializeTags();
-
-                    analyzeBtn.addEventListener('click', async () => {
-                        // Reset UI
-                        loader.classList.remove('hidden');
-                        resultsContainer.classList.add('hidden');
-                        errorContainer.classList.add('hidden');
-                        
-                        try {
-                            // This should point to your local Go server's endpoint for analysis, not the resume retrieval
-                            const response = await fetch('http://localhost:8080/analyze-resume', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ user_id: currentUserId })
-                            });
-
-                            if (!response.ok) {
-                                throw new Error(`Server responded with status: ${response.status}. Please ensure the Go API is running.`);
-                            }
-
-                            const data = await response.json();
-                            
-                            // Populate UI with data
-                            displayOverallRating(data.overallRating,overallScoreEl, ratingLabelEl, progressCircle);
-                            displayContactInfo(data.contactInfo, contactEmailEl, contactPhoneEl);
-                            displaySkills(data.skills, skillsTableBody);
-
-                            // Show results
-                            resultsContainer.classList.remove('hidden');
-
-                        } catch (error) {
-                            console.error("Fetch error:", error);
-                            displayError(error.message);
-                        } finally {
-                            loader.classList.add('hidden');
-                        }
-                    });
-                    
-                    function displayError(message) {
-                        errorMessage.textContent = message;
-                        errorContainer.classList.remove('hidden');
-                    }
+            function displayError(message) {
+                errorMessage.textContent = message;
+                errorContainer.classList.remove('hidden');
+            }
 
 
-                    // Attach listeners for the profile section
-                    document.getElementById('toggleProfileFormBtn').addEventListener('click', () => toggleProfileForm(true));
-                    document.getElementById('cancelProfileUpdateBtn').addEventListener('click', () => toggleProfileForm(false));
-                    document.getElementById('jobSeekerProfileForm').addEventListener('submit', handleProfileUpdate);
+            // Attach listeners for the profile section
+            document.getElementById('toggleProfileFormBtn').addEventListener('click', () => toggleProfileForm(true));
+            document.getElementById('cancelProfileUpdateBtn').addEventListener('click', () => toggleProfileForm(false));
+            document.getElementById('jobSeekerProfileForm').addEventListener('submit', handleProfileUpdate);
 
 
-                    // --- Initialize sections ---
-                    await fetchUserProfile(currentUserId);
-                    renderProfileSection();
-                    updateDashboardResumeSection(currentUserId);
-                    updateAppliedJobsStatus();
+            // --- Initialize sections ---
+            await fetchUserProfile(currentUserId);
+            renderProfileSection();
+            updateDashboardResumeSection(currentUserId);
         }
 window.loadCompanyDashboard = function() {
     
@@ -1906,7 +1688,7 @@ window.loadCompanyDashboard = function() {
     })();
 
 
-    // --- MAIN DASHBOARD CONTENT & LOGIC ---
+    // --- MAIN DASHBOARD CONTENT & LOGIC (UNCHANGED) ---
     const paidText = currentIsPaidMember ? "PREMIUM: Access to full contact details." : "FREE TIER: Contact details are masked.";
     const upgradeLink = currentIsPaidMember ? '' : `<p class="text-sm text-red-500 font-bold mt-4">Upgrade your plan to view contact details.</p>`;
     const currCompany = localStorage.getItem('currentCompanyId');
@@ -1916,18 +1698,15 @@ window.loadCompanyDashboard = function() {
                 <div class="p-8 bg-white rounded-2xl shadow-xl border border-indigo-400/50 space-y-6">
                     <h3 class="text-2xl font-bold text-indigo-700 border-b pb-3">Recruiter Tools</h3>
                     <p class="text-sm text-gray-600">Create job listings or browse profiles of talented jobseekers.</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <button id="createJobBtn" class="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             + Create New Job
                         </button>
                         <button id="viewListingsBtn" class="py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-400">
                             View Active Listings
                         </button>
-                        <button id="viewApplicationsBtn" class="py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600">
-                           View Applications
-                        </button>
-                         <button id="viewJobseekersBtn" class="py-2 px-4 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600">
-                            Browse Candidates
+                        <button id="viewJobseekersBtn" class="py-2 px-4 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600">
+                            View Jobseeker Profiles
                         </button>
                     </div>
                 </div>
@@ -2036,7 +1815,7 @@ window.loadCompanyDashboard = function() {
                                 <textarea name="job_description" id="edit_job_description" rows="3" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required></textarea>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                 <div>
+                                    <div>
                                     <label for="edit_number_of_openings" class="block text-sm font-medium text-gray-700">Openings</label>
                                     <input type="number" name="number_of_openings" id="edit_number_of_openings" min="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
                                 </div>
@@ -2046,7 +1825,7 @@ window.loadCompanyDashboard = function() {
                                         <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option>
                                     </select>
                                 </div>
-                                 <div>
+                                    <div>
                                     <label for="edit_required_experience" class="block text-sm font-medium text-gray-700">Experience (Years)</label>
                                     <input type="text" name="required_experience" id="edit_required_experience" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
                                 </div>
@@ -2124,7 +1903,6 @@ window.loadCompanyDashboard = function() {
     const listingsGrid = document.getElementById('listingsGrid');
     const hideListingsBtn = document.getElementById('hideListingsBtn');
     const listingsHeader = document.getElementById('listingsHeader');
-    const viewApplicationsBtn = document.getElementById('viewApplicationsBtn');
     const viewJobseekersBtn = document.getElementById('viewJobseekersBtn');
     const editModal = document.getElementById('editJobModal');
     const editJobForm = document.getElementById('editJobForm');
@@ -2213,50 +1991,33 @@ window.loadCompanyDashboard = function() {
         }
     });
 
-    // --- Event Listener to View Jobseeker Applications ---
-    viewApplicationsBtn.addEventListener('click', async () => {
-        viewApplicationsBtn.textContent = 'Loading...';
-        viewApplicationsBtn.disabled = true;
-        listingsHeader.textContent = 'Job Applications Received';
-
-        try {
-            const response = await fetch(`${API_URL}/job-visits/company/${currCompany}`);
-            if(!response.ok) throw new Error('Could not fetch applications.');
-            const applications = await response.json();
-            displayJobApplications(applications);
-        } catch (error) {
-            listingsGrid.innerHTML = `<div class="p-6 bg-red-100 text-red-700 rounded-lg">${error.message}</div>`;
-            showMessage(error.message, 'error');
-        } finally {
-            listingsContainer.classList.remove('hidden');
-            viewApplicationsBtn.textContent = 'View Applications';
-            viewApplicationsBtn.disabled = false;
-        }
-    });
-
-    // --- Event Listener to Browse All Candidates ---
+    // --- Event Listener to View Jobseeker Profiles ---
     viewJobseekersBtn.addEventListener('click', async () => {
         const originalText = viewJobseekersBtn.textContent;
         viewJobseekersBtn.textContent = 'Loading...';
         viewJobseekersBtn.disabled = true;
 
         try {
-            listingsHeader.textContent = 'Browse Candidate Profiles';
-             const [profileResponse, statusResponse] = await Promise.all([
+            listingsHeader.textContent = 'Jobseeker Profiles';
+            
+            const [profileResponse, statusResponse] = await Promise.all([
                 fetch('http://localhost:8080/jobseeker/profile/all'),
                 fetch(`http://localhost:8080/resume-visit/company/${currCompany}`)
             ]);
+
             if (!profileResponse.ok) throw new Error(`Failed to fetch profiles: ${profileResponse.status}`);
             if (!statusResponse.ok) throw new Error(`Failed to fetch statuses: ${statusResponse.status}`);
+            
             const profiles = await profileResponse.json();
             const contacts = await statusResponse.json();
+
             const contactStatusMap = contacts.reduce((map, contact) => {
                 map[contact.user_id] = contact;
                 return map;
             }, {});
 
-            // displayJobseekerProfiles(profiles, contactStatusMap);
-            displayAllJobSeekers(profiles,contactStatusMap);
+            displayJobseekerProfiles(profiles, contactStatusMap);
+
         } catch (error) {
             console.error('Error fetching jobseeker data:', error);
             listingsGrid.innerHTML = `<div class="p-6 bg-red-100 text-red-700 rounded-lg">Failed to load jobseeker data.</div>`;
@@ -2267,36 +2028,40 @@ window.loadCompanyDashboard = function() {
         }
     });
     
-    // --- Handler for application status updates by company ---
-    async function handleApplicationStatusUpdate(event) {
-        const select = event.target;
-        const { userId, jobId, companyId } = select.dataset;
-        const newStatus = select.value;
+    // --- Handler for status updates ---
+    async function handleStatusUpdate(event) {
+        const selectElement = event.target;
+        const userId = selectElement.dataset.userid;
+        const resumeId = selectElement.dataset.resumeid;
+        const newStatus = selectElement.value;
+        const companyId = localStorage.getItem('currentCompanyId');
 
-        select.disabled = true;
+        selectElement.disabled = true;
 
         try {
-            const response = await fetch(`${API_URL}/job-visits`, {
+            const response = await fetch('http://localhost:8080/resume-visit', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    user_id: parseInt(userId),
-                    job_id: parseInt(jobId),
-                    company_id: parseInt(companyId),
-                    contacted_status: newStatus
+                    user_id: parseInt(userId, 10),
+                    resume_id: parseInt(resumeId, 10),
+                    company_id: parseInt(companyId, 10),
+                    status: newStatus
                 })
             });
 
             if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.message || 'Failed to update status');
+                const errorData = await response.text();
+                throw new Error(`Failed to update status: ${errorData || response.statusText}`);
             }
-            showMessage(`Status updated to ${newStatus.replace('_', ' ')}`, 'success');
+            
+            alert('Status updated successfully!');
+
         } catch (error) {
-            showMessage(error.message, 'error');
-            select.value = select.querySelector('option[selected]').value; // Revert on failure
+            console.error('Error updating status:', error);
+            alert(error.message);
         } finally {
-            select.disabled = false;
+            selectElement.disabled = false;
         }
     }
     
@@ -2321,20 +2086,14 @@ window.loadCompanyDashboard = function() {
         }
     }
     
-    function displayAllJobSeekers(profiles,contactStatusMap) {
+    function displayJobseekerProfiles(profiles, contactStatusMap) {
         listingsGrid.innerHTML = ''; 
+
         if (!profiles || profiles.length === 0) {
             listingsGrid.innerHTML = `<div class="p-6 bg-yellow-100 text-yellow-800 rounded-lg">No jobseeker profiles found.</div>`;
             return;
         }
-        const resumeViewLimitReached = false;
-        const isButtonDisabled = !(currentIsPaidMember && !resumeViewLimitReached);
-            // Set the button's appearance and state based on the conditions
-        const buttonClass = isButtonDisabled
-            ? 'py-1 px-3 bg-gray-400 text-white text-sm font-semibold rounded-md cursor-not-allowed'
-            : 'py-1 px-3 bg-green-600 text-white text-sm font-semibold rounded-md shadow-md hover:bg-green-700';
-        
-        const buttonState = isButtonDisabled ? 'disabled' : '';
+
         profiles.forEach(profile => {
             const profileCard = document.createElement('div');
             profileCard.className = 'p-6 bg-white rounded-lg shadow-md border border-gray-200';
@@ -2343,25 +2102,19 @@ window.loadCompanyDashboard = function() {
             const statusOptions = ['RESUME_CHECKED', 'CONTACTED', 'PENDING', 'REJECTED', 'SELECTED'];
             let statusManagementHTML = '';
 
-            if (currentContact && !isButtonDisabled) {
+            if (currentContact) {
                 statusManagementHTML = `
                     <div class="mt-4 pt-4 border-t">
                         <label for="status-select-${profile.user_id}" class="block text-sm font-medium text-gray-700 mb-1">Candidate Status:</label>
                         <select id="status-select-${profile.user_id}" 
                                 data-userid="${profile.user_id}" 
-                                
-                                // MODIFIED: Safely access resume_id to prevent errors if no contact has been made yet.
-                                data-resumeid="${currentContact?.resume_id ?? ''}" 
-                                
+                                data-resumeid="${currentContact.resume_id}" 
                                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
-                            
                             ${statusOptions.map(option => 
-                                // MODIFIED: Safely check the status to select the correct option.
-                                `<option value="${option}" ${option === currentContact?.status ? 'selected' : ''}>
+                                `<option value="${option}" ${option === currentContact.status ? 'selected' : ''}>
                                     ${option.replace(/_/g, ' ')}
                                 </option>`
                             ).join('')}
-
                         </select>
                     </div>
                 `;
@@ -2369,196 +2122,87 @@ window.loadCompanyDashboard = function() {
             
             profileCard.innerHTML = `
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-3 mb-3">
-                    <h4 class="text-xl font-bold text-teal-800">${profile.job_title || 'N/A'}</h4>
-                    <span class="text-sm font-medium text-gray-600 bg-gray-100 py-1 px-3 rounded-full mt-2 sm:mt-0">${profile.location || 'N/A'}</span>
+                    <h4 class="text-xl font-bold text-teal-800">${profile.job_title}</h4>
+                    <span class="text-sm font-medium text-gray-600 bg-gray-100 py-1 px-3 rounded-full mt-2 sm:mt-0">${profile.location}</span>
                 </div>
-                <p class="text-gray-600 mb-4 italic">"${profile.profile_summary || 'No summary provided'}"</p>
+                <p class="text-gray-600 mb-4 italic">"${profile.profile_summary}"</p>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                    <div><span class="font-semibold text-gray-800">🏢 Current Co:</span><p class="text-gray-600">${profile.current_company || 'N/A'}</p></div>
-                    <div><span class="font-semibold text-gray-800">⏳ Experience:</span><p class="text-gray-600">${profile.overall_work_ex || 'N/A'} yrs</p></div>
-                    <div><span class="font-semibold text-gray-800">💰 Salary (LPA):</span><p class="text-gray-600">${profile.salary_range || 'N/A'}</p></div>
-                    <div><span class="font-semibold text-gray-800">📍 Open to:</span><p class="text-gray-600">${profile.open_for_locations || 'N/A'}</p></div>
-                    <div class="md:col-span-2"><span class="font-semibold text-gray-800">🛠️ Skills:</span><p class="text-gray-600">${profile.skills || 'N/A'}</p></div>
+                    <div><span class="font-semibold text-gray-800">🏢 Current Co:</span><p class="text-gray-600">${profile.current_company}</p></div>
+                    <div><span class="font-semibold text-gray-800">⏳ Experience:</span><p class="text-gray-600">${profile.work_ex} yrs (Overall: ${profile.overall_work_ex} yrs)</p></div>
+                    <div><span class="font-semibold text-gray-800">💰 Salary (LPA):</span><p class="text-gray-600">${profile.salary_range}</p></div>
+                    <div><span class="font-semibold text-gray-800">📍 Open to:</span><p class="text-gray-600">${profile.open_for_locations}</p></div>
+                    <div><span class="font-semibold text-gray-800">🛠️ Skills:</span><p class="text-gray-600">${profile.skills}</p></div>
+                    <div><span class="font-semibold text-gray-800">💼 Job Type:</span><p class="text-gray-600">${profile.job_type}</p></div>
                 </div>
                 <div class="mt-4 pt-4 border-t flex space-x-2">
-                <button id="view-resume-${profile.user_id}" data-userid="${profile.user_id}" class="${buttonClass}" ${buttonState}>
-                    📄 View Resume
-                </button>
-            </div>
-            ${ isButtonDisabled ? `<p class="text-xs text-red-500 mt-2">Upgrade or renew subscription to view.</p>` : '' }
-            ${isButtonDisabled ? statusManagementHTML : ''}
+                    <button id="view-resume-${profile.user_id}" data-userid="${profile.user_id}" data-profileid="${profile.id}"
+                        class="py-1 px-3 bg-green-600 text-white text-sm font-semibold rounded-md shadow-md hover:bg-green-700">
+                        📄 View Resume
+                    </button>
+                </div>
+                ${statusManagementHTML}
             `;
             listingsGrid.appendChild(profileCard);
-              if (currentContact && !isButtonDisabled) {
-                document.getElementById(`status-select-${profile.user_id}`).addEventListener('change', handleApplicationStatusUpdate);
+            
+            if (currentContact) {
+                document.getElementById(`status-select-${profile.user_id}`).addEventListener('change', handleStatusUpdate);
             }
-            if (!isButtonDisabled) {
-                document.getElementById(`view-resume-${profile.user_id}`).addEventListener('click', async (event) => {
-                    const button = event.currentTarget;
-                    button.textContent = 'Loading...';
-                    button.disabled = true;
-                    const userId = button.dataset.userid;
-                    const companyId = localStorage.getItem('currentCompanyId');
-                    if (!companyId) {
-                        alert('Company ID not found. Cannot log resume visit.');
-                        button.textContent = '📄 View Resume';
-                        button.disabled = false;
-                        return;
+
+            document.getElementById(`view-resume-${profile.user_id}`).addEventListener('click', async (event) => {
+                const button = event.currentTarget;
+                button.textContent = 'Loading...';
+                button.disabled = true;
+
+                const userId = button.dataset.userid;
+                const companyId = localStorage.getItem('currentCompanyId');
+
+                if (!companyId) {
+                    alert('Company ID not found. Cannot log resume visit.');
+                    button.textContent = '📄 View Resume';
+                    button.disabled = false;
+                    return;
+                }
+
+                try {
+
+                    const resumeResponse = await fetch(`http://localhost:8080/resume/${userId}`);
+                    if (!resumeResponse.ok) throw new Error(`Could not fetch resume. Status: ${resumeResponse.status}`);
+                    
+                    const resumeDetails = await resumeResponse.json();
+
+                    if (resumeDetails.download_url) {
+                        const resumeUrl = 'http://localhost:8080' + resumeDetails.download_url;
+                        resumeModalHeader.textContent = `Viewing Resume: ${resumeDetails.filename || 'N/A'}`;
+                        resumeFrame.src = resumeUrl;
+                        resumeViewerModal.style.display = 'flex';
+                    } else {
+                        throw new Error("Download URL not found in the response.");
                     }
 
-                    try {
-                        const resumeResponse = await fetch(`http://localhost:8080/resume/${userId}`);
-                        if (!resumeResponse.ok) throw new Error(`Could not fetch resume. Status: ${resumeResponse.status}`);
-                        const resumeDetails = await resumeResponse.json();
-                        if (resumeDetails.download_url) {
-                            const resumeUrl = 'http://localhost:8080' + resumeDetails.download_url;
-                            resumeModalHeader.textContent = `Viewing Resume: ${resumeDetails.filename || 'N/A'}`;
-                            resumeFrame.src = resumeUrl;
-                            resumeViewerModal.style.display = 'flex';
-                        } else {
-                            throw new Error("Download URL not found in the response.");
-                        }
-                        fetch('http://localhost:8080/resume-visit', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                user_id: parseInt(userId, 10),
-                                resume_id: parseInt(resumeDetails.id, 10),
-                                company_id: parseInt(companyId, 10)
-                            })
-                        }).then(res => {
-                            if (res.ok) {
+                    fetch('http://localhost:8080/resume-visit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: parseInt(userId, 10),
+                            resume_id: parseInt(resumeDetails.id, 10),
+                            company_id: parseInt(companyId, 10)
+                        })
+                    }).then(res => {
+                        if (res.ok) {
                             viewJobseekersBtn.click();
-                            }
-                        }).catch(logError => console.error("Failed to log resume visit:", logError));
-                    } catch (error) {
-                        console.error('Error viewing resume:', error);
-
-                        alert(`Failed to load resume: ${error.message}`);
-
-                    } finally {
-
-                        button.textContent = '📄 View Resume';
-
-                        button.disabled = false;
-
-                    }
-
-                });
-            }
+                        }
+                    }).catch(logError => console.error("Failed to log resume visit:", logError));
+                    
+                } catch (error) {
+                    console.error('Error viewing resume:', error);
+                    alert(`Failed to load resume: ${error.message}`);
+                } finally {
+                    button.textContent = '📄 View Resume';
+                    button.disabled = false;
+                }
+            });
         });
     }
-
-        function displayJobApplications(applications) {
-            listingsGrid.innerHTML = '';
-            if (!applications || applications.length === 0) {
-                listingsGrid.innerHTML = `<div class="p-6 bg-yellow-100 text-yellow-800 rounded-lg">No applications received yet.</div>`;
-                return;
-            }
-
-            const isDropdownDisabled = !currentIsPaidMember;
-            const dropdownState = isDropdownDisabled ? 'disabled' : '';
-            const dropdownClass = isDropdownDisabled 
-                ? 'status-update-select mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 rounded-md shadow-sm bg-gray-200 cursor-not-allowed'
-                : 'status-update-select mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm';
-            
-            applications.forEach(app => {
-                const contactDate = new Date(app.contact_date).toLocaleDateString();
-                const card = document.createElement('div');
-                card.className = 'p-6 bg-white rounded-lg shadow-md border border-gray-200';
-                
-                // --- NEW LOGIC ---
-                // 1. Conditionally set the text for the applicant ID.
-                const applicantIdText = currentIsPaidMember ? app.user_id : 'Visible to Subscribers';
-
-                const statusOptions = ['CONTACTED', 'PENDING', 'REJECTED', 'SELECTED'];
-                const optionsHTML = statusOptions.map(opt => 
-                    `<option value="${opt}" ${app.contacted_status === opt ? 'selected' : ''}>${opt.replace(/_/g, ' ')}</option>`
-                ).join('');
-
-                card.innerHTML = `
-                    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-3 mb-3">
-                        <div>
-                            <h4 class="text-xl font-bold text-gray-800">${app.job_title}</h4>
-                            <p class="text-sm text-gray-500">Applied on: ${contactDate}</p>
-                        </div>
-                        <span class="text-sm font-medium text-gray-600 bg-gray-100 py-1 px-3 rounded-full mt-2 sm:mt-0">
-                            Applicant ID: ${applicantIdText}
-                        </span>
-                    </div>
-                    <p class="text-gray-600 mb-4">${app.job_description}</p>
-                    <div class="mt-4 pt-4 border-t">
-                        <label for="status-select-${app.user_id}-${app.job_id}" class="block text-sm font-medium text-gray-700 mb-1">Update Application Status:</label>
-                        <select 
-                            id="status-select-${app.user_id}-${app.job_id}"
-                            data-user-id="${app.user_id}"
-                            data-job-id="${app.job_id}"
-                            data-company-id="${localStorage.getItem('currentCompanyId')}"
-                            class="${dropdownClass}"
-                            ${dropdownState}>
-                            ${optionsHTML}
-                        </select>
-                        ${isDropdownDisabled ? '<p class="text-xs text-red-500 mt-1">Upgrade to a premium plan to change applicant status.</p>' : ''}
-                    </div>
-                `;
-                listingsGrid.appendChild(card);
-            });
-
-            if (!isDropdownDisabled) {
-                document.querySelectorAll('.status-update-select').forEach(select => {
-                    select.addEventListener('change', handleApplicationStatusUpdate);
-                });
-            }
-        }
-
-    // function displayJobApplications(applications) {
-    //     listingsGrid.innerHTML = '';
-    //     if (!applications || applications.length === 0) {
-    //         listingsGrid.innerHTML = `<div class="p-6 bg-yellow-100 text-yellow-800 rounded-lg">No applications received yet.</div>`;
-    //         return;
-    //     }
-        
-    //     applications.forEach(app => {
-    //         const contactDate = new Date(app.contact_date).toLocaleDateString();
-    //         const card = document.createElement('div');
-    //         card.className = 'p-6 bg-white rounded-lg shadow-md border border-gray-200';
-            
-    //         const statusOptions = ['CONTACTED', 'PENDING', 'REJECTED', 'SELECTED'];
-    //         const optionsHTML = statusOptions.map(opt => 
-    //             `<option value="${opt}" ${app.contacted_status === opt ? 'selected' : ''}>${opt.replace(/_/g, ' ')}</option>`
-    //         ).join('');
-
-    //         card.innerHTML = `
-    //             <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-3 mb-3">
-    //                 <div>
-    //                     <h4 class="text-xl font-bold text-gray-800">${app.job_title}</h4>
-    //                     <p class="text-sm text-gray-500">Applied on: ${contactDate}</p>
-    //                 </div>
-    //                 <span class="text-sm font-medium text-gray-600 bg-gray-100 py-1 px-3 rounded-full mt-2 sm:mt-0">
-    //                     Applicant ID: ${app.user_id}
-    //                 </span>
-    //             </div>
-    //             <p class="text-gray-600 mb-4">${app.job_description}</p>
-    //             <div class="mt-4 pt-4 border-t">
-    //                 <label for="status-select-${app.user_id}-${app.job_id}" class="block text-sm font-medium text-gray-700 mb-1">Update Application Status:</label>
-    //                 <select 
-    //                     id="status-select-${app.user_id}-${app.job_id}"
-    //                     data-user-id="${app.user_id}"
-    //                     data-job-id="${app.job_id}"
-    //                     data-company-id="${localStorage.getItem('currentCompanyId')}"
-    //                     class="status-update-select mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
-    //                     ${optionsHTML}
-    //                 </select>
-    //             </div>
-    //         `;
-    //         listingsGrid.appendChild(card);
-    //     });
-
-    //     // Add event listeners to all new select dropdowns
-    //     document.querySelectorAll('.status-update-select').forEach(select => {
-    //         select.addEventListener('change', handleApplicationStatusUpdate);
-    //     });
-    // }
 
     function displayJobListings(jobs) {
         listingsGrid.innerHTML = '';
@@ -2686,32 +2330,32 @@ window.loadCompanyDashboard = function() {
         document.addEventListener('DOMContentLoaded', checkAuth);
 
         function displayOverallRating(rating,overallScoreEl,ratingLabelEl,progressCircle) {
-                 const percentage = Math.round(rating.scorePercentage);
-                 overallScoreEl.textContent = `${percentage}%`;
-                 ratingLabelEl.textContent = rating.ratingLabel;
-                 const offset = 100 - percentage;
-                 progressCircle.style.strokeDashoffset = offset;
+                const percentage = Math.round(rating.scorePercentage);
+                overallScoreEl.textContent = `${percentage}%`;
+                ratingLabelEl.textContent = rating.ratingLabel;
+                const offset = 100 - percentage;
+                progressCircle.style.strokeDashoffset = offset;
         }
 
         function displayContactInfo(contact,contactEmailEl,contactPhoneEl) {
-                 contactEmailEl.textContent = contact.email || 'Not found';
-                 contactPhoneEl.textContent = contact.phone || 'Not found';
+                contactEmailEl.textContent = contact.email || 'Not found';
+                contactPhoneEl.textContent = contact.phone || 'Not found';
         }
 
             function displaySkills(skills,skillsTableBody) {
-                 skillsTableBody.innerHTML = ''; // Clear previous results
-                 skills.forEach(skill => {
-                     const row = document.createElement('tr');
-                     row.className = 'border-b border-gray-700 transition duration-300 ease-in-out hover:bg-gray-700/50';
-                     row.innerHTML = `
-                         <td class="whitespace-nowrap px-4 py-3 font-medium">${skill.skill}</td>
-                         <td class="whitespace-nowrap px-4 py-3 text-center">${skill.mentions}</td>
-                         <td class="whitespace-nowrap px-4 py-3">${skill.rating}</td>
-                     `;
-                     skillsTableBody.appendChild(row);
-                 });
+                skillsTableBody.innerHTML = ''; // Clear previous results
+                skills.forEach(skill => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-700 transition duration-300 ease-in-out hover:bg-gray-700/50';
+                    row.innerHTML = `
+                        <td class="whitespace-nowrap px-4 py-3 font-medium">${skill.skill}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-center">${skill.mentions}</td>
+                        <td class="whitespace-nowrap px-4 py-3">${skill.rating}</td>
+                    `;
+                    skillsTableBody.appendChild(row);
+                });
             }
-            
     </script>
 </body>
 </html>
+
